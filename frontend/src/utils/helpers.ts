@@ -106,9 +106,25 @@ export function getEventBg(type: string): string {
 }
 
 export function nowISO(): string {
-  return new Date().toISOString().slice(0, 16);
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
 }
 
 export function todayISO(): string {
-  return new Date().toISOString().split('T')[0];
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - tzOffset).toISOString().split('T')[0];
+}
+
+export function utcToLocalString(utcDateStr: string): string {
+  if (!utcDateStr) return '';
+  const date = new Date(utcDateStr);
+  const tzOffset = date.getTimezoneOffset() * 60000;
+  return new Date(date.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
+export function localToUTC(localDateStr: string): string {
+  if (!localDateStr) return '';
+  return new Date(localDateStr).toISOString();
 }

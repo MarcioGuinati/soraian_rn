@@ -46,7 +46,9 @@ export default function ChildrenPage() {
     setSaving(true);
     try {
       const data = {
-        name, birthDate, gender,
+        name, 
+        birthDate: birthDate.includes('T') ? birthDate : `${birthDate}T12:00:00Z`, 
+        gender,
         birthWeight: birthWeight ? parseFloat(birthWeight) : undefined,
         birthHeight: birthHeight ? parseFloat(birthHeight) : undefined,
         bloodType: bloodType || undefined,

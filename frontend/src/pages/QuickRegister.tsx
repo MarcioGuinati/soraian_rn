@@ -3,7 +3,7 @@ import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChild } from '../contexts/ChildContext';
 import api from '../services/api';
 import toast from 'react-hot-toast';
-import { nowISO } from '../utils/helpers';
+import { nowISO, utcToLocalString, localToUTC } from '../utils/helpers';
 import './QuickRegister.css';
 
 const RECORD_TYPES = [
@@ -35,7 +35,7 @@ export default function QuickRegisterPage() {
   const [amountMl, setAmountMl] = useState(editEvent?.amountMl?.toString() || '');
   const [breastSide, setBreastSide] = useState(editEvent?.breastSide || '');
   const [durationMinutes, setDurationMinutes] = useState(editEvent?.durationMinutes?.toString() || '');
-  const [recordedAt, setRecordedAt] = useState(editEvent?.eventDate ? editEvent.eventDate.slice(0, 16) : nowISO());
+  const [recordedAt, setRecordedAt] = useState(editEvent?.eventDate ? utcToLocalString(editEvent.eventDate) : nowISO());
   const [notes, setNotes] = useState(editEvent?.notes || '');
 
   // Food
@@ -49,8 +49,8 @@ export default function QuickRegisterPage() {
   const [color, setColor] = useState(editEvent?.color || '');
 
   // Sleep
-  const [sleepStartedAt, setSleepStartedAt] = useState(editEvent?.startedAt ? editEvent.startedAt.slice(0, 16) : nowISO());
-  const [sleepEndedAt, setSleepEndedAt] = useState(editEvent?.endedAt ? editEvent.endedAt.slice(0, 16) : '');
+  const [sleepStartedAt, setSleepStartedAt] = useState(editEvent?.startedAt ? utcToLocalString(editEvent.startedAt) : nowISO());
+  const [sleepEndedAt, setSleepEndedAt] = useState(editEvent?.endedAt ? utcToLocalString(editEvent.endedAt) : '');
   const [sleepLocation, setSleepLocation] = useState(editEvent?.location || '');
 
   // Bath
@@ -100,43 +100,43 @@ export default function QuickRegisterPage() {
       switch (selectedType) {
         case 'feeding':
           endpoint = `/children/${childId}/feedings`;
-          body = { type: feedingType, amountMl: amountMl ? parseFloat(amountMl) : undefined, breastSide: breastSide || undefined, durationMinutes: durationMinutes ? parseInt(durationMinutes) : undefined, recordedAt, notes: notes || undefined };
+          body = { type: feedingType, amountMl: amountMl ? parseFloat(amountMl) : undefined, breastSide: breastSide || undefined, durationMinutes: durationMinutes ? parseInt(durationMinutes) : undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'food':
           endpoint = `/children/${childId}/foods`;
-          body = { mealType, food, amount: foodAmount ? parseFloat(foodAmount) : undefined, unit: foodUnit || undefined, recordedAt, notes: notes || undefined };
+          body = { mealType, food, amount: foodAmount ? parseFloat(foodAmount) : undefined, unit: foodUnit || undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'diaper-pee':
           endpoint = `/children/${childId}/diapers`;
-          body = { type: 'xixi', recordedAt, notes: notes || undefined };
+          body = { type: 'xixi', recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'diaper-poop':
           endpoint = `/children/${childId}/diapers`;
-          body = { type: 'coco', consistency: consistency || undefined, color: color || undefined, recordedAt, notes: notes || undefined };
+          body = { type: 'coco', consistency: consistency || undefined, color: color || undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'sleep':
           endpoint = `/children/${childId}/sleep`;
-          body = { startedAt: sleepStartedAt, endedAt: sleepEndedAt || undefined, location: sleepLocation || undefined, notes: notes || undefined };
+          body = { startedAt: localToUTC(sleepStartedAt), endedAt: sleepEndedAt ? localToUTC(sleepEndedAt) : undefined, location: sleepLocation || undefined, notes: notes || undefined };
           break;
         case 'bath':
           endpoint = `/children/${childId}/baths`;
-          body = { startedAt: recordedAt, durationMinutes: bathDuration ? parseInt(bathDuration) : undefined, waterTemperature: waterTemp ? parseFloat(waterTemp) : undefined, notes: notes || undefined };
+          body = { startedAt: localToUTC(recordedAt), durationMinutes: bathDuration ? parseInt(bathDuration) : undefined, waterTemperature: waterTemp ? parseFloat(waterTemp) : undefined, notes: notes || undefined };
           break;
         case 'temperature':
           endpoint = `/children/${childId}/temperatures`;
-          body = { temperature: parseFloat(temperature), measurementMethod, recordedAt, notes: notes || undefined };
+          body = { temperature: parseFloat(temperature), measurementMethod, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'weight':
           endpoint = `/children/${childId}/weights`;
-          body = { weight: parseFloat(weight), height: height ? parseFloat(height) : undefined, headCircumference: headCircumference ? parseFloat(headCircumference) : undefined, recordedAt, notes: notes || undefined };
+          body = { weight: parseFloat(weight), height: height ? parseFloat(height) : undefined, headCircumference: headCircumference ? parseFloat(headCircumference) : undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'medication':
           endpoint = `/children/${childId}/medications`;
-          body = { medicationName: medName, dosage, unit: medUnit || undefined, recordedAt, reason: reason || undefined, notes: notes || undefined };
+          body = { medicationName: medName, dosage, unit: medUnit || undefined, recordedAt: localToUTC(recordedAt), reason: reason || undefined, notes: notes || undefined };
           break;
         case 'note':
           endpoint = `/children/${childId}/notes`;
-          body = { category: category || undefined, content, recordedAt };
+          body = { category: category || undefined, content, recordedAt: localToUTC(recordedAt) };
           break;
       }
 
