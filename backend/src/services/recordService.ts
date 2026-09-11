@@ -33,19 +33,17 @@ export class RecordService {
   }
 
   async updateFeeding(id: string, userId: string, data: any) {
-    const record = await prisma.feedingRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) {
-      throw new Error('Registro não encontrado');
-    }
+    const record = await prisma.feedingRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.feedingRecord.update({ where: { id }, data });
   }
 
   async deleteFeeding(id: string, userId: string) {
-    const record = await prisma.feedingRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) {
-      throw new Error('Registro não encontrado');
-    }
+    const record = await prisma.feedingRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.feedingRecord.delete({ where: { id } });
   }
 
@@ -77,15 +75,17 @@ export class RecordService {
   }
 
   async updateFood(id: string, userId: string, data: any) {
-    const record = await prisma.foodRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.foodRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.foodRecord.update({ where: { id }, data });
   }
 
   async deleteFood(id: string, userId: string) {
-    const record = await prisma.foodRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.foodRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.foodRecord.delete({ where: { id } });
   }
 
@@ -117,15 +117,17 @@ export class RecordService {
   }
 
   async updateDiaper(id: string, userId: string, data: any) {
-    const record = await prisma.diaperRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.diaperRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.diaperRecord.update({ where: { id }, data });
   }
 
   async deleteDiaper(id: string, userId: string) {
-    const record = await prisma.diaperRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.diaperRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.diaperRecord.delete({ where: { id } });
   }
 
@@ -203,8 +205,9 @@ export class RecordService {
   }
 
   async updateSleep(id: string, userId: string, data: any) {
-    const record = await prisma.sleepRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.sleepRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.startedAt) data.startedAt = new Date(data.startedAt);
     if (data.endedAt) {
       data.endedAt = new Date(data.endedAt);
@@ -218,8 +221,9 @@ export class RecordService {
   }
 
   async deleteSleep(id: string, userId: string) {
-    const record = await prisma.sleepRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.sleepRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.sleepRecord.delete({ where: { id } });
   }
 
@@ -249,15 +253,17 @@ export class RecordService {
   }
 
   async updateBath(id: string, userId: string, data: any) {
-    const record = await prisma.bathRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.bathRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.startedAt) data.startedAt = new Date(data.startedAt);
     return prisma.bathRecord.update({ where: { id }, data });
   }
 
   async deleteBath(id: string, userId: string) {
-    const record = await prisma.bathRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.bathRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.bathRecord.delete({ where: { id } });
   }
 
@@ -287,15 +293,17 @@ export class RecordService {
   }
 
   async updateTemperature(id: string, userId: string, data: any) {
-    const record = await prisma.temperatureRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.temperatureRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.temperatureRecord.update({ where: { id }, data });
   }
 
   async deleteTemperature(id: string, userId: string) {
-    const record = await prisma.temperatureRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.temperatureRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.temperatureRecord.delete({ where: { id } });
   }
 
@@ -326,15 +334,17 @@ export class RecordService {
   }
 
   async updateWeight(id: string, userId: string, data: any) {
-    const record = await prisma.weightRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.weightRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.weightRecord.update({ where: { id }, data });
   }
 
   async deleteWeight(id: string, userId: string) {
-    const record = await prisma.weightRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.weightRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.weightRecord.delete({ where: { id } });
   }
 
@@ -366,15 +376,17 @@ export class RecordService {
   }
 
   async updateMedication(id: string, userId: string, data: any) {
-    const record = await prisma.medicationRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.medicationRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.medicationRecord.update({ where: { id }, data });
   }
 
   async deleteMedication(id: string, userId: string) {
-    const record = await prisma.medicationRecord.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.medicationRecord.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.medicationRecord.delete({ where: { id } });
   }
 
@@ -403,15 +415,17 @@ export class RecordService {
   }
 
   async updateNote(id: string, userId: string, data: any) {
-    const record = await prisma.note.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.note.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     if (data.recordedAt) data.recordedAt = new Date(data.recordedAt);
     return prisma.note.update({ where: { id }, data });
   }
 
   async deleteNote(id: string, userId: string) {
-    const record = await prisma.note.findUnique({ where: { id }, include: { child: true } });
-    if (!record || record.child.userId !== userId) throw new Error('Registro não encontrado');
+    const record = await prisma.note.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
     return prisma.note.delete({ where: { id } });
   }
 }
