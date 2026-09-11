@@ -15,7 +15,9 @@ model User {
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
-  children     Child[]
+  children          Child[]
+  childAccesses     ChildAccess[] @relation("UserToAccess")
+  pushSubscriptions PushSubscription[] @relation("UserToPush")
 
   @@map("users")
 }
@@ -49,6 +51,7 @@ model Child {
   vaccines            Vaccine[]
   reminders           Reminder[]
   notes_              Note[]
+  sharedAccess        ChildAccess[] @relation("ChildToAccess")
 
   @@index([userId])
   @@map("children")
@@ -263,4 +266,31 @@ model Note {
   @@index([childId])
   @@index([recordedAt])
   @@map("notes")
+}
+
+model ChildAccess {
+  id        String   @id @default(uuid())
+  childId   String   @map("child_id")
+  userId    String   @map("user_id")
+  role      String   @default("viewer")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  child     Child    @relation("ChildToAccess", fields: [childId], references: [id], onDelete: Cascade)
+  user      User     @relation("UserToAccess", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([childId, userId])
+  @@map("child_access")
+}
+
+model PushSubscription {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user      User     @relation("UserToPush", fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("push_subscriptions")
 }

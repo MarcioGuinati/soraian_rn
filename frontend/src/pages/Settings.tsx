@@ -63,6 +63,27 @@ export default function SettingsPage() {
       </div>
 
       <div className="qr-form" style={{ marginBottom: 24 }}>
+        <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 16 }}>Notificações</h2>
+        <p style={{ fontSize: 'var(--font-size-sm)', color: 'var(--color-text-secondary)', marginBottom: 16 }}>
+          Ative as notificações para receber avisos sobre lembretes no seu celular.
+        </p>
+        <button 
+          className="btn btn-secondary btn-block" 
+          onClick={async () => {
+            try {
+              const { subscribeToPushNotifications } = await import('../services/pushApi');
+              await subscribeToPushNotifications();
+              toast.success('Notificações ativadas com sucesso!');
+            } catch (err: any) {
+              toast.error(err.message || 'Erro ao ativar notificações');
+            }
+          }}
+        >
+          🔔 Ativar Notificações Push
+        </button>
+      </div>
+
+      <div className="qr-form" style={{ marginBottom: 24 }}>
         <h2 style={{ fontSize: 'var(--font-size-lg)', fontWeight: 600, marginBottom: 16 }}>Perfil</h2>
         <div className="form-group"><label className="form-label">Nome</label><input className="form-input" value={name} onChange={e => setName(e.target.value)} /></div>
         <div className="form-group"><label className="form-label">Telefone</label><input className="form-input" value={phone} onChange={e => setPhone(e.target.value)} /></div>

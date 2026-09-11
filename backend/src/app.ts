@@ -10,6 +10,7 @@ import childrenRoutes from './routes/children';
 import recordRoutes from './routes/records';
 import dashboardRoutes from './routes/dashboard';
 import healthRoutes from './routes/health';
+import pushRoutes from './routes/pushRoutes';
 
 const app = express();
 
@@ -47,6 +48,7 @@ app.use('/api/children', childrenRoutes);
 app.use('/api', recordRoutes);
 app.use('/api', dashboardRoutes);
 app.use('/api', healthRoutes);
+app.use('/api/push', pushRoutes);
 
 // Health check
 app.get('/api/health', (_req, res) => {

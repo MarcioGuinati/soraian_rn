@@ -29,6 +29,16 @@ export class ChildController {
     await childService.delete(req.params.id, req.userId);
     res.json({ status: 'success', message: 'Criança removida com sucesso' });
   }
+
+  async share(req: any, res: Response) {
+    const access = await childService.shareAccess(req.params.id, req.userId, req.body.email);
+    res.json({ status: 'success', data: access, message: 'Acesso compartilhado com sucesso' });
+  }
+
+  async revoke(req: any, res: Response) {
+    await childService.revokeAccess(req.params.id, req.userId, req.params.accessId);
+    res.json({ status: 'success', message: 'Acesso removido com sucesso' });
+  }
 }
 
 export const childController = new ChildController();

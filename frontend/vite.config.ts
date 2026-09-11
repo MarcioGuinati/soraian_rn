@@ -6,13 +6,16 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
+      strategies: 'injectManifest',
+      srcDir: 'src',
+      filename: 'sw.ts',
       registerType: 'autoUpdate',
       devOptions: { enabled: false },
       manifest: {
         name: 'SORAIA - Rotina do Bebê',
         short_name: 'SORAIA',
         description: 'Acompanhamento da rotina infantil',
-        theme_color: '#7C8CF8',
+        theme_color: '#7403F1',
         background_color: '#F4F6FB',
         display: 'standalone',
         start_url: '/',

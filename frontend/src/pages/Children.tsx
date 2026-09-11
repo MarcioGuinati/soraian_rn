@@ -80,8 +80,20 @@ export default function ChildrenPage() {
       await api.delete(`/children/${id}`);
       toast.success('Criança removida');
       await refreshChildren();
-    } catch {
-      toast.error('Erro ao remover');
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Erro ao remover');
+    }
+  };
+
+  const handleShare = async (id: string) => {
+    const email = window.prompt("Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):");
+    if (!email) return;
+    try {
+      await api.post(`/children/${id}/share`, { email });
+      toast.success('Acesso compartilhado com sucesso!');
+      await refreshChildren();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Erro ao compartilhar');
     }
   };
 
@@ -134,10 +146,16 @@ export default function ChildrenPage() {
               <div className="ch-card-info">
                 <div className="ch-card-name">{child.name}</div>
                 <div className="ch-card-age">{getChildAge(child.birthDate)} • {formatDate(child.birthDate)}</div>
+                {child.sharedAccess && child.sharedAccess.length > 0 && (
+                  <div style={{fontSize: 12, color: 'var(--color-primary-light)', marginTop: 4}}>
+                    🤝 Compartilhado com: {child.sharedAccess.map((a: any) => a.user?.name?.split(' ')[0] || a.user?.email).join(', ')}
+                  </div>
+                )}
               </div>
               <div className="ch-card-actions" onClick={e => e.stopPropagation()}>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)}>✏️</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)}>🗑️</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleShare(child.id)} title="Compartilhar Acesso">🤝</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)} title="Editar">✏️</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)} title="Remover">🗑️</button>
               </div>
             </div>
           ))}

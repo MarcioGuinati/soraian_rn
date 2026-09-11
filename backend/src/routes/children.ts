@@ -27,4 +27,12 @@ router.delete('/:id', (req, res, next) => {
   childController.delete(req, res).catch(next);
 });
 
+router.post('/:id/share', (req, res, next) => {
+  childController.share(req, res).catch(next);
+});
+
+router.delete('/:id/access/:accessId', (req, res, next) => {
+  childController.revoke(req, res).catch(next);
+});
+
 export default router;
