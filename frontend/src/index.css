@@ -1,17 +1,17 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
 :root {
-  /* Primary - Deep Wine (#89216B) */
-  --color-primary: #89216B;
-  --color-primary-light: #A43B85;
-  --color-primary-lighter: #C966A5;
-  --color-primary-dark: #63124C;
-  --color-primary-bg: rgba(137, 33, 107, 0.08);
+  /* Primary - Electric Violet (#7403F1) */
+  --color-primary: #7403F1;
+  --color-primary-light: #9B4AF5;
+  --color-primary-lighter: #C28EF9;
+  --color-primary-dark: #4B029E;
+  --color-primary-bg: rgba(116, 3, 241, 0.08);
 
-  /* Accent - Vibrant Rose (#DA4453) */
-  --color-accent: #DA4453;
-  --color-accent-light: #EF6F7B;
-  --color-accent-dark: #A92634;
+  /* Accent - Indigo */
+  --color-accent: #6366F1;
+  --color-accent-light: #818CF8;
+  --color-accent-dark: #4338CA;
 
   /* Status */
   --color-success: #34D399;
@@ -76,7 +76,7 @@
   --color-border: #3F3F46;
   --color-border-light: #27272A;
 
-  --color-primary-bg: rgba(137, 33, 107, 0.2);
+  --color-primary-bg: rgba(116, 3, 241, 0.2);
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.5);
