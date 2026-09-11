@@ -1,5 +1,5 @@
 import webpush from 'web-push';
-import prisma from '../config/prisma';
+import prisma from '../config/database';
 
 const publicKey = process.env.VAPID_PUBLIC_KEY || '';
 const privateKey = process.env.VAPID_PRIVATE_KEY || '';
@@ -35,7 +35,7 @@ export const sendPushToUser = async (userId: string, payload: any) => {
     where: { userId },
   });
 
-  const notifications = subscriptions.map(async (sub) => {
+  const notifications = subscriptions.map(async (sub: any) => {
     try {
       await webpush.sendNotification(
         {

@@ -1,5 +1,5 @@
 import cron from 'node-cron';
-import prisma from '../config/prisma';
+import prisma from '../config/database';
 import { sendPushToUser } from './pushService';
 
 export const startCronJobs = () => {

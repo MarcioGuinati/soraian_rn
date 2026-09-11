@@ -13,7 +13,7 @@ export const subscribe = async (req: AuthRequest, res: Response) => {
       return res.status(400).json({ message: 'Subscription data is required' });
     }
 
-    await saveSubscription(req.user!.id, subscription);
+    await saveSubscription(req.userId!, subscription);
     res.status(201).json({ message: 'Subscription saved successfully' });
   } catch (error) {
     console.error('Error saving subscription:', error);
