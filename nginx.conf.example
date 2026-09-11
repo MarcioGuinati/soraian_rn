@@ -4,6 +4,7 @@
 # BACKEND (API)
 # ==========================================
 server {
+    listen 80;
     server_name api.soraiababy.com.br;
 
     location / {
@@ -28,6 +29,7 @@ server {
 # FRONTEND (APP)
 # ==========================================
 server {
+    listen 80;
     server_name app.soraiababy.com.br;
 
     location / {
