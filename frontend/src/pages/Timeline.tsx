@@ -158,7 +158,7 @@ export default function TimelinePage() {
               🗑️ Excluir Registro
             </div>
             <p className="modal-text">
-              Tem certeza que deseja excluir este registro de <strong>{getEventLabel(eventToDelete.eventType, eventToDelete.type)}</strong>? Essa ação não pode ser desfeita.
+              Tem certeza que deseja excluir este registro de <strong>{getEventLabel(eventToDelete.eventType)}</strong>? Essa ação não pode ser desfeita.
             </p>
             <div className="modal-actions">
               <button className="btn btn-ghost" onClick={() => setEventToDelete(null)}>
