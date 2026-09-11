@@ -20,6 +20,7 @@ export interface Child {
   notes?: string;
   createdAt: string;
   updatedAt: string;
+  sharedAccess?: any[];
 }
 
 export interface FeedingRecord {
