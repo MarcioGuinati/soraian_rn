@@ -4,12 +4,20 @@ import prisma from '../config/database';
 const publicKey = process.env.VAPID_PUBLIC_KEY || '';
 const privateKey = process.env.VAPID_PRIVATE_KEY || '';
 
-// Configure web-push
-webpush.setVapidDetails(
-  'mailto:contato@soraiababy.com.br',
-  publicKey,
-  privateKey
-);
+// Configure web-push only if keys are present
+if (publicKey && privateKey) {
+  try {
+    webpush.setVapidDetails(
+      'mailto:contato@soraiababy.com.br',
+      publicKey,
+      privateKey
+    );
+  } catch (error) {
+    console.error('Failed to configure web-push:', error);
+  }
+} else {
+  console.warn('VAPID keys not provided. Push notifications will be disabled.');
+}
 
 export const getPublicKey = () => publicKey;
 
