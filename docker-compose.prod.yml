@@ -44,7 +44,7 @@ services:
       dockerfile: Dockerfile
       args:
         # Passando a URL do backend em tempo de build para o frontend
-        VITE_API_URL: https://api.soraiababy.com.br
+        VITE_API_URL: https://api.soraiababy.com.br/api
     restart: unless-stopped
     ports:
       # Expondo na porta local 8080 da VPS para o Nginx fazer o Proxy Pass
