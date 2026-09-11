@@ -1,0 +1,11 @@
+.rp-title { font-size: var(--font-size-2xl); font-weight: 700; margin-bottom: var(--space-4); }
+.rp-type-selector { display: flex; flex-wrap: wrap; gap: var(--space-2); margin-bottom: var(--space-4); }
+.rp-period-selector { display: flex; gap: var(--space-2); margin-bottom: var(--space-5); }
+.rp-period-btn { padding: var(--space-2) var(--space-4); border-radius: var(--radius-full); border: 1.5px solid var(--color-border); background: var(--color-bg-input); font-size: var(--font-size-sm); font-weight: 500; color: var(--color-text-secondary); cursor: pointer; transition: all var(--transition-fast); }
+.rp-period-btn.active { background: var(--color-primary); color: white; border-color: var(--color-primary); }
+.rp-summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--space-3); margin-bottom: var(--space-5); }
+.rp-stat { background: var(--color-bg-card); border-radius: var(--radius-lg); padding: var(--space-4); text-align: center; border: 1px solid var(--color-border-light); }
+.rp-stat-value { font-size: var(--font-size-xl); font-weight: 800; color: var(--color-text); }
+.rp-stat-label { font-size: var(--font-size-xs); color: var(--color-text-secondary); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; margin-top: 4px; }
+.rp-chart-card { background: var(--color-bg-card); border-radius: var(--radius-lg); padding: var(--space-4); border: 1px solid var(--color-border-light); margin-bottom: var(--space-4); }
+.rp-chart-title { font-size: var(--font-size-base); font-weight: 600; margin-bottom: var(--space-4); }

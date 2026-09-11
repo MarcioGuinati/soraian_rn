@@ -1,0 +1,266 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  phone        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  children     Child[]
+
+  @@map("users")
+}
+
+model Child {
+  id              String   @id @default(uuid())
+  userId          String   @map("user_id")
+  name            String
+  birthDate       DateTime @map("birth_date")
+  gender          String
+  photo           String?
+  birthWeight     Float?   @map("birth_weight")
+  birthHeight     Float?   @map("birth_height")
+  bloodType       String?  @map("blood_type")
+  parentNames     String?  @map("parent_names")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+  updatedAt       DateTime @updatedAt @map("updated_at")
+
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  feedingRecords      FeedingRecord[]
+  foodRecords         FoodRecord[]
+  diaperRecords       DiaperRecord[]
+  sleepRecords        SleepRecord[]
+  bathRecords         BathRecord[]
+  temperatureRecords  TemperatureRecord[]
+  weightRecords       WeightRecord[]
+  medicationRecords   MedicationRecord[]
+  appointments        Appointment[]
+  vaccines            Vaccine[]
+  reminders           Reminder[]
+  notes_              Note[]
+
+  @@index([userId])
+  @@map("children")
+}
+
+model FeedingRecord {
+  id              String   @id @default(uuid())
+  childId         String   @map("child_id")
+  type            String   // peito, formula, leite_ordenhado, outro
+  amountMl        Float?   @map("amount_ml")
+  breastSide      String?  @map("breast_side") // esquerdo, direito, ambos
+  durationMinutes Int?     @map("duration_minutes")
+  recordedAt      DateTime @map("recorded_at")
+  notes           String?
+  createdAt       DateTime @default(now()) @map("created_at")
+
+  child           Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@index([childId, recordedAt])
+  @@map("feeding_records")
+}
+
+model FoodRecord {
+  id         String   @id @default(uuid())
+  childId    String   @map("child_id")
+  mealType   String   @map("meal_type") // cafe, almoco, lanche, jantar, outro
+  food       String
+  amount     Float?
+  unit       String?
+  recordedAt DateTime @map("recorded_at")
+  notes      String?
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  child      Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@map("food_records")
+}
+
+model DiaperRecord {
+  id          String   @id @default(uuid())
+  childId     String   @map("child_id")
+  type        String   // xixi, coco
+  consistency String?
+  color       String?
+  amount      String?
+  recordedAt  DateTime @map("recorded_at")
+  notes       String?
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  child       Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@index([childId, recordedAt])
+  @@map("diaper_records")
+}
+
+model SleepRecord {
+  id              String    @id @default(uuid())
+  childId         String    @map("child_id")
+  startedAt       DateTime  @map("started_at")
+  endedAt         DateTime? @map("ended_at")
+  durationMinutes Int?      @map("duration_minutes")
+  location        String?
+  isActive        Boolean   @default(false) @map("is_active")
+  notes           String?
+  createdAt       DateTime  @default(now()) @map("created_at")
+
+  child           Child     @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([startedAt])
+  @@index([childId, startedAt])
+  @@map("sleep_records")
+}
+
+model BathRecord {
+  id               String   @id @default(uuid())
+  childId          String   @map("child_id")
+  startedAt        DateTime @map("started_at")
+  durationMinutes  Int?     @map("duration_minutes")
+  waterTemperature Float?   @map("water_temperature")
+  notes            String?
+  createdAt        DateTime @default(now()) @map("created_at")
+
+  child            Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([startedAt])
+  @@map("bath_records")
+}
+
+model TemperatureRecord {
+  id                String   @id @default(uuid())
+  childId           String   @map("child_id")
+  temperature       Float
+  measurementMethod String?  @map("measurement_method")
+  recordedAt        DateTime @map("recorded_at")
+  notes             String?
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  child             Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@map("temperature_records")
+}
+
+model WeightRecord {
+  id                String   @id @default(uuid())
+  childId           String   @map("child_id")
+  weight            Float
+  height            Float?
+  headCircumference Float?   @map("head_circumference")
+  recordedAt        DateTime @map("recorded_at")
+  notes             String?
+  createdAt         DateTime @default(now()) @map("created_at")
+
+  child             Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@map("weight_records")
+}
+
+model MedicationRecord {
+  id             String   @id @default(uuid())
+  childId        String   @map("child_id")
+  medicationName String   @map("medication_name")
+  dosage         String
+  unit           String?
+  recordedAt     DateTime @map("recorded_at")
+  reason         String?
+  notes          String?
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  child          Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@map("medication_records")
+}
+
+model Appointment {
+  id           String   @id @default(uuid())
+  childId      String   @map("child_id")
+  professional String
+  specialty    String?
+  date         DateTime
+  time         String?
+  location     String?
+  reason       String?
+  notes        String?
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  child        Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([date])
+  @@map("appointments")
+}
+
+model Vaccine {
+  id       String   @id @default(uuid())
+  childId  String   @map("child_id")
+  name     String
+  dose     String?
+  date     DateTime
+  batch    String?
+  location String?
+  notes    String?
+  createdAt DateTime @default(now()) @map("created_at")
+
+  child    Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([date])
+  @@map("vaccines")
+}
+
+model Reminder {
+  id          String   @id @default(uuid())
+  childId     String   @map("child_id")
+  title       String
+  description String?
+  dateTime    DateTime @map("date_time")
+  recurrence  String?  // none, daily, weekly, monthly
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  child       Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([dateTime])
+  @@map("reminders")
+}
+
+model Note {
+  id         String   @id @default(uuid())
+  childId    String   @map("child_id")
+  category   String?
+  content    String
+  recordedAt DateTime @map("recorded_at")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  child      Child    @relation(fields: [childId], references: [id], onDelete: Cascade)
+
+  @@index([childId])
+  @@index([recordedAt])
+  @@map("notes")
+}

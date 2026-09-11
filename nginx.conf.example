@@ -1,0 +1,41 @@
+# /etc/nginx/sites-available/soraiababy.conf
+
+# ==========================================
+# BACKEND (API)
+# ==========================================
+server {
+    server_name api.soraiababy.com.br;
+
+    location / {
+        proxy_pass http://127.0.0.1:3030;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        
+        # Repassa o IP real do cliente para o backend (útil para logs)
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+
+    # Configurações para upload de imagens/arquivos
+    client_max_body_size 50M;
+}
+
+# ==========================================
+# FRONTEND (APP)
+# ==========================================
+server {
+    server_name app.soraiababy.com.br;
+
+    location / {
+        proxy_pass http://127.0.0.1:8080;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

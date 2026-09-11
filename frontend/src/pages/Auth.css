@@ -1,0 +1,121 @@
+.auth-page {
+  min-height: 100vh;
+  display: flex;
+  background: var(--color-bg);
+}
+
+.auth-split {
+  display: flex;
+  width: 100%;
+  height: 100vh;
+}
+
+/* LEFT SIDE: IMAGE */
+.auth-image-side {
+  display: none;
+  flex: 1;
+  background: url('/auth-bg.png') center/cover no-repeat;
+  position: relative;
+}
+
+.auth-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(to bottom, rgba(137, 33, 107, 0.4), rgba(218, 68, 83, 0.6));
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: var(--space-12);
+  color: white;
+}
+
+.auth-image-quote {
+  font-size: var(--font-size-3xl);
+  font-weight: 700;
+  line-height: 1.2;
+  margin-bottom: var(--space-4);
+  max-width: 500px;
+}
+
+/* RIGHT SIDE: FORM */
+.auth-form-side {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-4);
+}
+
+.auth-container {
+  width: 100%;
+  max-width: 440px;
+  background: var(--color-bg-card);
+  border-radius: var(--radius-2xl);
+  padding: var(--space-8);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--color-border-light);
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.auth-logo {
+  font-size: 48px;
+  display: block;
+  margin-bottom: var(--space-3);
+}
+
+.auth-title {
+  font-size: var(--font-size-3xl);
+  font-weight: 800;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.04em;
+  margin-bottom: var(--space-2);
+}
+
+.auth-subtitle {
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.auth-form {
+  margin-bottom: var(--space-6);
+}
+
+.auth-footer {
+  text-align: center;
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.auth-footer a {
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+/* RESPONSIVE DESKTOP */
+@media (min-width: 900px) {
+  .auth-image-side {
+    display: flex;
+  }
+  
+  .auth-form-side {
+    flex: 0 0 500px;
+    background: var(--color-bg-card);
+  }
+  
+  /* On desktop, remove the card borders since the whole right side is the card */
+  .auth-container {
+    box-shadow: none;
+    border: none;
+    background: transparent;
+  }
+}
