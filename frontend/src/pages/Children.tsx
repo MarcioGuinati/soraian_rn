@@ -251,6 +251,8 @@ export default function ChildrenPage() {
             </div>
           </div>
         </div>
+      )}
+
       {revokeConfirm && (
         <div className="modal-overlay" onClick={() => setRevokeConfirm(null)}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
