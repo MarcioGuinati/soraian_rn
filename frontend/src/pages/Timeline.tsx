@@ -13,10 +13,15 @@ export default function TimelinePage() {
   const [events, setEvents] = useState<TimelineEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
+  
+  // Data inicial (hoje) no formato YYYY-MM-DD local
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+  const [selectedDate, setSelectedDate] = useState(todayStr);
 
   useEffect(() => {
     if (selectedChild) loadTimeline();
-  }, [selectedChild, filter]);
+  }, [selectedChild, filter, selectedDate]);
 
   const [eventToDelete, setEventToDelete] = useState<TimelineEvent | null>(null);
 
@@ -24,10 +29,21 @@ export default function TimelinePage() {
     if (!selectedChild) return;
     try {
       setLoading(true);
-      const params: any = { limit: 100 };
+      
+      const [year, month, day] = selectedDate.split('-').map(Number);
+      const startOfDay = new Date(year, month - 1, day, 0, 0, 0, 0);
+      const endOfDay = new Date(year, month - 1, day, 23, 59, 59, 999);
+
+      const params: any = { 
+        limit: 100,
+        startDate: startOfDay.toISOString(),
+        endDate: endOfDay.toISOString()
+      };
       if (filter) params.type = filter;
       const res = await api.get(`/children/${selectedChild.id}/timeline`, { params });
-      setEvents(res.data.data.events);
+      
+      const sortedEvents = res.data.data.events.sort((a: any, b: any) => new Date(b.eventDate).getTime() - new Date(a.eventDate).getTime());
+      setEvents(sortedEvents);
     } catch (err) {
       console.error('Failed to load timeline', err);
     } finally {
@@ -102,12 +118,23 @@ export default function TimelinePage() {
       <div className="container">
         <h1 className="tl-title">Linha do tempo</h1>
 
-        <div className="tl-filters">
-          {filters.map(f => (
-            <button key={f} className={`qr-option ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
-              {f ? `${getEventEmoji(f)} ${getEventLabel(f)}` : 'Todos'}
-            </button>
-          ))}
+        <div className="tl-controls-header">
+          <div className="tl-date-picker-wrapper">
+            <label className="tl-date-label">Data</label>
+            <input 
+              type="date" 
+              className="tl-date-picker"
+              value={selectedDate}
+              onChange={(e) => setSelectedDate(e.target.value)}
+            />
+          </div>
+          <div className="tl-filters">
+            {filters.map(f => (
+              <button key={f} className={`qr-option ${filter === f ? 'active' : ''}`} onClick={() => setFilter(f)}>
+                {f ? `${getEventEmoji(f)} ${getEventLabel(f)}` : 'Todos'}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
