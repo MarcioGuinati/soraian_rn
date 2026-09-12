@@ -98,11 +98,24 @@ export default function ChildrenPage() {
       await api.post(`/children/${childToShare}/share`, { email: shareEmail });
       toast.success('Acesso compartilhado com sucesso!');
       await refreshChildren();
-      setChildToShare(null);
+      setShareEmail('');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao compartilhar');
     }
   };
+
+  const handleRevokeAccess = async (childId: string, accessId: string) => {
+    if (!confirm('Deseja realmente remover o acesso desta pessoa?')) return;
+    try {
+      await api.delete(`/children/${childId}/access/${accessId}`);
+      toast.success('Acesso removido com sucesso!');
+      await refreshChildren();
+    } catch (err: any) {
+      toast.error(err.response?.data?.message || 'Erro ao remover acesso');
+    }
+  };
+
+  const selectedChildForShare = children.find(c => c.id === childToShare);
 
   if (showForm) {
     return (
@@ -172,12 +185,38 @@ export default function ChildrenPage() {
         + Adicionar criança
       </button>
 
-      {childToShare && (
+      {childToShare && selectedChildForShare && (
         <div className="modal-overlay" onClick={() => setChildToShare(null)}>
           <div className="modal-card" onClick={e => e.stopPropagation()}>
             <div className="modal-title">
               🤝 Compartilhar Acesso
             </div>
+            
+            {/* Lista de pessoas que já têm acesso */}
+            {selectedChildForShare.sharedAccess && selectedChildForShare.sharedAccess.length > 0 && (
+              <div style={{ marginBottom: 24 }}>
+                <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--color-text-secondary)' }}>Pessoas com acesso:</h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {selectedChildForShare.sharedAccess.map((access: any) => (
+                    <div key={access.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-bg-input)', padding: '8px 12px', borderRadius: 8 }}>
+                      <div style={{ display: 'flex', flexDirection: 'column' }}>
+                        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{access.user?.name}</span>
+                        <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{access.user?.email}</span>
+                      </div>
+                      <button 
+                        onClick={() => handleRevokeAccess(childToShare, access.id)}
+                        style={{ border: 'none', background: 'none', color: 'var(--color-danger)', cursor: 'pointer', fontSize: 18 }}
+                        title="Remover acesso"
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--color-text-secondary)' }}>Convidar nova pessoa:</h4>
             <p className="modal-text" style={{ marginBottom: 16 }}>
               Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):
             </p>
@@ -192,7 +231,7 @@ export default function ChildrenPage() {
             />
             <div className="modal-actions">
               <button className="btn btn-ghost" onClick={() => setChildToShare(null)}>
-                Cancelar
+                Fechar
               </button>
               <button className="btn btn-primary" onClick={confirmShare}>
                 Compartilhar
