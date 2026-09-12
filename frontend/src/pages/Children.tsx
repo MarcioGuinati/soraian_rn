@@ -13,6 +13,8 @@ export default function ChildrenPage() {
   const [editId, setEditId] = useState<string | null>(null);
   const [childToShare, setChildToShare] = useState<string | null>(null);
   const [shareEmail, setShareEmail] = useState('');
+  const [revokeConfirm, setRevokeConfirm] = useState<{childId: string, accessId: string} | null>(null);
+  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Form
   const [name, setName] = useState('');
@@ -76,12 +78,17 @@ export default function ChildrenPage() {
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja realmente remover esta criança e todos os seus registros?')) return;
+  const handleDeleteClick = (id: string) => {
+    setDeleteConfirm(id);
+  };
+
+  const confirmDelete = async () => {
+    if (!deleteConfirm) return;
     try {
-      await api.delete(`/children/${id}`);
+      await api.delete(`/children/${deleteConfirm}`);
       toast.success('Criança removida');
       await refreshChildren();
+      setDeleteConfirm(null);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao remover');
     }
@@ -104,12 +111,17 @@ export default function ChildrenPage() {
     }
   };
 
-  const handleRevokeAccess = async (childId: string, accessId: string) => {
-    if (!confirm('Deseja realmente remover o acesso desta pessoa?')) return;
+  const handleRevokeAccessClick = (childId: string, accessId: string) => {
+    setRevokeConfirm({ childId, accessId });
+  };
+
+  const confirmRevokeAccess = async () => {
+    if (!revokeConfirm) return;
     try {
-      await api.delete(`/children/${childId}/access/${accessId}`);
+      await api.delete(`/children/${revokeConfirm.childId}/access/${revokeConfirm.accessId}`);
       toast.success('Acesso removido com sucesso!');
       await refreshChildren();
+      setRevokeConfirm(null);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao remover acesso');
     }
@@ -175,7 +187,7 @@ export default function ChildrenPage() {
               <div className="ch-card-actions" onClick={e => e.stopPropagation()}>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleShareClick(child.id)} title="Compartilhar Acesso">🤝</button>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)} title="Editar">✏️</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)} title="Remover">🗑️</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleDeleteClick(child.id)} title="Remover">🗑️</button>
               </div>
             </div>
           ))}
@@ -204,7 +216,7 @@ export default function ChildrenPage() {
                         <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{access.user?.email}</span>
                       </div>
                       <button 
-                        onClick={() => handleRevokeAccess(childToShare, access.id)}
+                        onClick={() => handleRevokeAccessClick(childToShare, access.id)}
                         style={{ border: 'none', background: 'none', color: 'var(--color-danger)', cursor: 'pointer', fontSize: 18 }}
                         title="Remover acesso"
                       >
@@ -235,6 +247,46 @@ export default function ChildrenPage() {
               </button>
               <button className="btn btn-primary" onClick={confirmShare}>
                 Compartilhar
+              </button>
+            </div>
+          </div>
+        </div>
+      {revokeConfirm && (
+        <div className="modal-overlay" onClick={() => setRevokeConfirm(null)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">
+              🛑 Remover Acesso
+            </div>
+            <p className="modal-text">
+              Deseja realmente remover o acesso desta pessoa à rotina da criança?
+            </p>
+            <div className="modal-actions">
+              <button className="btn btn-ghost" onClick={() => setRevokeConfirm(null)}>
+                Cancelar
+              </button>
+              <button className="btn btn-danger" onClick={confirmRevokeAccess}>
+                Sim, remover
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {deleteConfirm && (
+        <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">
+              🗑️ Excluir Criança
+            </div>
+            <p className="modal-text">
+              Deseja realmente remover esta criança e <strong>todos os seus registros</strong>? Essa ação não pode ser desfeita.
+            </p>
+            <div className="modal-actions">
+              <button className="btn btn-ghost" onClick={() => setDeleteConfirm(null)}>
+                Cancelar
+              </button>
+              <button className="btn btn-danger" onClick={confirmDelete}>
+                Sim, excluir
               </button>
             </div>
           </div>
