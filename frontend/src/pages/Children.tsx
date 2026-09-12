@@ -11,6 +11,8 @@ export default function ChildrenPage() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
+  const [childToShare, setChildToShare] = useState<string | null>(null);
+  const [shareEmail, setShareEmail] = useState('');
 
   // Form
   const [name, setName] = useState('');
@@ -85,13 +87,18 @@ export default function ChildrenPage() {
     }
   };
 
-  const handleShare = async (id: string) => {
-    const email = window.prompt("Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):");
-    if (!email) return;
+  const handleShareClick = (id: string) => {
+    setChildToShare(id);
+    setShareEmail('');
+  };
+
+  const confirmShare = async () => {
+    if (!shareEmail || !childToShare) return;
     try {
-      await api.post(`/children/${id}/share`, { email });
+      await api.post(`/children/${childToShare}/share`, { email: shareEmail });
       toast.success('Acesso compartilhado com sucesso!');
       await refreshChildren();
+      setChildToShare(null);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao compartilhar');
     }
@@ -153,7 +160,7 @@ export default function ChildrenPage() {
                 )}
               </div>
               <div className="ch-card-actions" onClick={e => e.stopPropagation()}>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleShare(child.id)} title="Compartilhar Acesso">🤝</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleShareClick(child.id)} title="Compartilhar Acesso">🤝</button>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)} title="Editar">✏️</button>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)} title="Remover">🗑️</button>
               </div>
@@ -164,6 +171,36 @@ export default function ChildrenPage() {
       <button className="btn btn-primary btn-lg btn-block" style={{ marginTop: 24 }} onClick={() => { resetForm(); setShowForm(true); }}>
         + Adicionar criança
       </button>
+
+      {childToShare && (
+        <div className="modal-overlay" onClick={() => setChildToShare(null)}>
+          <div className="modal-card" onClick={e => e.stopPropagation()}>
+            <div className="modal-title">
+              🤝 Compartilhar Acesso
+            </div>
+            <p className="modal-text" style={{ marginBottom: 16 }}>
+              Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):
+            </p>
+            <input 
+              type="email" 
+              className="form-input" 
+              placeholder="email@exemplo.com"
+              value={shareEmail}
+              onChange={e => setShareEmail(e.target.value)}
+              style={{ marginBottom: 24 }}
+              autoFocus
+            />
+            <div className="modal-actions">
+              <button className="btn btn-ghost" onClick={() => setChildToShare(null)}>
+                Cancelar
+              </button>
+              <button className="btn btn-primary" onClick={confirmShare}>
+                Compartilhar
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div></div>
   );
 }
