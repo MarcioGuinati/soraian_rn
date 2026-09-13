@@ -24,7 +24,7 @@ export default function RegisterPage() {
     try {
       await register({ name, email, password, phone: phone || undefined });
       toast.success('Conta criada com sucesso! 🎉');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao criar conta');
     } finally {

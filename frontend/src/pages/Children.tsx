@@ -141,7 +141,7 @@ export default function ChildrenPage() {
       ) : (
         <div className="ch-list">
           {children.map(child => (
-            <div key={child.id} className="ch-card" onClick={() => { selectChild(child); navigate('/'); }}>
+            <div key={child.id} className="ch-card" onClick={() => { selectChild(child); navigate('/dashboard'); }}>
               <div className="ch-card-avatar">{child.name.charAt(0)}</div>
               <div className="ch-card-info">
                 <div className="ch-card-name">{child.name}</div>

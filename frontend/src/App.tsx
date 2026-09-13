@@ -16,6 +16,8 @@ import HealthPage from './pages/Health';
 import RemindersPage from './pages/Reminders';
 import SettingsPage from './pages/Settings';
 
+import LandingPage from './pages/Landing';
+
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { token, loading } = useAuth();
   if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}><div className="skeleton" style={{ width: 200, height: 24 }} /></div>;
@@ -28,10 +30,15 @@ function AppRoutes() {
 
   return (
     <Routes>
-      <Route path="/login" element={token ? <Navigate to="/" /> : <LoginPage />} />
-      <Route path="/register" element={token ? <Navigate to="/" /> : <RegisterPage />} />
+      {/* Public Landing Page */}
+      <Route path="/" element={token ? <Navigate to="/dashboard" /> : <LandingPage />} />
+      
+      {/* Auth */}
+      <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <LoginPage />} />
+      <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <RegisterPage />} />
 
-      <Route path="/" element={<ProtectedRoute><ChildProvider><Layout><DashboardPage /></Layout></ChildProvider></ProtectedRoute>} />
+      {/* App Routes */}
+      <Route path="/dashboard" element={<ProtectedRoute><ChildProvider><Layout><DashboardPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/add" element={<ProtectedRoute><ChildProvider><Layout><QuickRegisterPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/timeline" element={<ProtectedRoute><ChildProvider><Layout><TimelinePage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/reports" element={<ProtectedRoute><ChildProvider><Layout><ReportsPage /></Layout></ChildProvider></ProtectedRoute>} />

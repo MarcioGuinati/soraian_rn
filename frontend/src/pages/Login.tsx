@@ -17,7 +17,7 @@ export default function LoginPage() {
     try {
       await login(email, password);
       toast.success('Bem-vindo(a) de volta! 👋');
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao fazer login');
     } finally {

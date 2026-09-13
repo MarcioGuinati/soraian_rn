@@ -49,7 +49,7 @@ export default function Layout({ children }: LayoutProps) {
 
       <div className="layout-body">
         <aside className="sidebar">
-          <NavLink to="/" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`} end>
+          <NavLink to="/dashboard" className={({ isActive }) => `sidebar-item ${isActive ? 'active' : ''}`} end>
             <span className="sidebar-icon">🏠</span>
             <span className="sidebar-label">Início</span>
           </NavLink>
@@ -77,7 +77,7 @@ export default function Layout({ children }: LayoutProps) {
       </main>
 
       <nav className="bottom-nav">
-        <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+        <NavLink to="/dashboard" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
           <span className="nav-icon">🏠</span>
           <span className="nav-label">Início</span>
         </NavLink>
