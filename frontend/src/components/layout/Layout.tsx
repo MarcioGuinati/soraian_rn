@@ -1,5 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom';
 import { useChild } from '../../contexts/ChildContext';
+import InstallPrompt from '../InstallPrompt';
 import './Layout.css';
 
 interface LayoutProps {
@@ -97,6 +98,7 @@ export default function Layout({ children }: LayoutProps) {
         </NavLink>
       </nav>
       </div>
+      <InstallPrompt />
     </div>
   );
 }

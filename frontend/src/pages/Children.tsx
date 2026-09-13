@@ -11,10 +11,6 @@ export default function ChildrenPage() {
   const navigate = useNavigate();
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
-  const [childToShare, setChildToShare] = useState<string | null>(null);
-  const [shareEmail, setShareEmail] = useState('');
-  const [revokeConfirm, setRevokeConfirm] = useState<{childId: string, accessId: string} | null>(null);
-  const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   // Form
   const [name, setName] = useState('');
@@ -50,8 +46,8 @@ export default function ChildrenPage() {
     setSaving(true);
     try {
       const data = {
-        name, 
-        birthDate: birthDate.includes('T') ? birthDate : `${birthDate}T12:00:00Z`, 
+        name,
+        birthDate: birthDate.includes('T') ? birthDate : `${birthDate}T12:00:00Z`,
         gender,
         birthWeight: birthWeight ? parseFloat(birthWeight) : undefined,
         birthHeight: birthHeight ? parseFloat(birthHeight) : undefined,
@@ -78,56 +74,28 @@ export default function ChildrenPage() {
     }
   };
 
-  const handleDeleteClick = (id: string) => {
-    setDeleteConfirm(id);
-  };
-
-  const confirmDelete = async () => {
-    if (!deleteConfirm) return;
+  const handleDelete = async (id: string) => {
+    if (!confirm('Deseja realmente remover esta criança e todos os seus registros?')) return;
     try {
-      await api.delete(`/children/${deleteConfirm}`);
+      await api.delete(`/children/${id}`);
       toast.success('Criança removida');
       await refreshChildren();
-      setDeleteConfirm(null);
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao remover');
     }
   };
 
-  const handleShareClick = (id: string) => {
-    setChildToShare(id);
-    setShareEmail('');
-  };
-
-  const confirmShare = async () => {
-    if (!shareEmail || !childToShare) return;
+  const handleShare = async (id: string) => {
+    const email = window.prompt("Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):");
+    if (!email) return;
     try {
-      await api.post(`/children/${childToShare}/share`, { email: shareEmail });
+      await api.post(`/children/${id}/share`, { email });
       toast.success('Acesso compartilhado com sucesso!');
       await refreshChildren();
-      setShareEmail('');
     } catch (err: any) {
       toast.error(err.response?.data?.message || 'Erro ao compartilhar');
     }
   };
-
-  const handleRevokeAccessClick = (childId: string, accessId: string) => {
-    setRevokeConfirm({ childId, accessId });
-  };
-
-  const confirmRevokeAccess = async () => {
-    if (!revokeConfirm) return;
-    try {
-      await api.delete(`/children/${revokeConfirm.childId}/access/${revokeConfirm.accessId}`);
-      toast.success('Acesso removido com sucesso!');
-      await refreshChildren();
-      setRevokeConfirm(null);
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao remover acesso');
-    }
-  };
-
-  const selectedChildForShare = children.find(c => c.id === childToShare);
 
   if (showForm) {
     return (
@@ -179,15 +147,15 @@ export default function ChildrenPage() {
                 <div className="ch-card-name">{child.name}</div>
                 <div className="ch-card-age">{getChildAge(child.birthDate)} • {formatDate(child.birthDate)}</div>
                 {child.sharedAccess && child.sharedAccess.length > 0 && (
-                  <div style={{fontSize: 12, color: 'var(--color-primary-light)', marginTop: 4}}>
+                  <div style={{ fontSize: 12, color: 'var(--color-primary-light)', marginTop: 4 }}>
                     🤝 Compartilhado com: {child.sharedAccess.map((a: any) => a.user?.name?.split(' ')[0] || a.user?.email).join(', ')}
                   </div>
                 )}
               </div>
               <div className="ch-card-actions" onClick={e => e.stopPropagation()}>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleShareClick(child.id)} title="Compartilhar Acesso">🤝</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleShare(child.id)} title="Compartilhar Acesso">🤝</button>
                 <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)} title="Editar">✏️</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleDeleteClick(child.id)} title="Remover">🗑️</button>
+                <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)} title="Remover">🗑️</button>
               </div>
             </div>
           ))}
@@ -196,104 +164,6 @@ export default function ChildrenPage() {
       <button className="btn btn-primary btn-lg btn-block" style={{ marginTop: 24 }} onClick={() => { resetForm(); setShowForm(true); }}>
         + Adicionar criança
       </button>
-
-      {childToShare && selectedChildForShare && (
-        <div className="modal-overlay" onClick={() => setChildToShare(null)}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-title">
-              🤝 Compartilhar Acesso
-            </div>
-            
-            {/* Lista de pessoas que já têm acesso */}
-            {selectedChildForShare.sharedAccess && selectedChildForShare.sharedAccess.length > 0 && (
-              <div style={{ marginBottom: 24 }}>
-                <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--color-text-secondary)' }}>Pessoas com acesso:</h4>
-                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {selectedChildForShare.sharedAccess.map((access: any) => (
-                    <div key={access.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'var(--color-bg-input)', padding: '8px 12px', borderRadius: 8 }}>
-                      <div style={{ display: 'flex', flexDirection: 'column' }}>
-                        <span style={{ fontSize: 14, fontWeight: 600, color: 'var(--color-text)' }}>{access.user?.name}</span>
-                        <span style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{access.user?.email}</span>
-                      </div>
-                      <button 
-                        onClick={() => handleRevokeAccessClick(childToShare, access.id)}
-                        style={{ border: 'none', background: 'none', color: 'var(--color-danger)', cursor: 'pointer', fontSize: 18 }}
-                        title="Remover acesso"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            <h4 style={{ fontSize: 14, fontWeight: 600, marginBottom: 8, color: 'var(--color-text-secondary)' }}>Convidar nova pessoa:</h4>
-            <p className="modal-text" style={{ marginBottom: 16 }}>
-              Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):
-            </p>
-            <input 
-              type="email" 
-              className="form-input" 
-              placeholder="email@exemplo.com"
-              value={shareEmail}
-              onChange={e => setShareEmail(e.target.value)}
-              style={{ marginBottom: 24 }}
-              autoFocus
-            />
-            <div className="modal-actions">
-              <button className="btn btn-ghost" onClick={() => setChildToShare(null)}>
-                Fechar
-              </button>
-              <button className="btn btn-primary" onClick={confirmShare}>
-                Compartilhar
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {revokeConfirm && (
-        <div className="modal-overlay" onClick={() => setRevokeConfirm(null)}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-title">
-              🛑 Remover Acesso
-            </div>
-            <p className="modal-text">
-              Deseja realmente remover o acesso desta pessoa à rotina da criança?
-            </p>
-            <div className="modal-actions">
-              <button className="btn btn-ghost" onClick={() => setRevokeConfirm(null)}>
-                Cancelar
-              </button>
-              <button className="btn btn-danger" onClick={confirmRevokeAccess}>
-                Sim, remover
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {deleteConfirm && (
-        <div className="modal-overlay" onClick={() => setDeleteConfirm(null)}>
-          <div className="modal-card" onClick={e => e.stopPropagation()}>
-            <div className="modal-title">
-              🗑️ Excluir Criança
-            </div>
-            <p className="modal-text">
-              Deseja realmente remover esta criança e <strong>todos os seus registros</strong>? Essa ação não pode ser desfeita.
-            </p>
-            <div className="modal-actions">
-              <button className="btn btn-ghost" onClick={() => setDeleteConfirm(null)}>
-                Cancelar
-              </button>
-              <button className="btn btn-danger" onClick={confirmDelete}>
-                Sim, excluir
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </div></div>
   );
 }

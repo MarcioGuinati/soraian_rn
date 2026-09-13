@@ -27,7 +27,7 @@ export const startCronJobs = () => {
       for (const reminder of dueReminders) {
         // Collect all user IDs who should receive the notification
         const userIdsToNotify = new Set([reminder.child.userId]);
-        
+
         for (const access of reminder.child.sharedAccess) {
           userIdsToNotify.add(access.userId);
         }
@@ -69,4 +69,8 @@ export const startCronJobs = () => {
   });
 
   console.log('Cron jobs started.');
+
+  // Start ideal routine cron
+  const { routineService } = require('./routineService');
+  routineService.startCron();
 };
