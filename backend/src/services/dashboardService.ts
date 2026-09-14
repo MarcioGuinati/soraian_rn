@@ -1,6 +1,6 @@
 import prisma from '../config/database';
 import { childService } from './childService';
-import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth } from 'date-fns';
+import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth, format } from 'date-fns';
 
 export class DashboardService {
   async getDashboard(childId: string, userId: string) {
@@ -261,7 +261,7 @@ export class DashboardService {
     const dailyMap: Record<string, { feeding: number; diaper: number; sleep: number; total: number }> = {};
 
     const addToDay = (date: Date, type: string) => {
-      const key = date.toISOString().split('T')[0];
+      const key = format(date, 'yyyy-MM-dd');
       if (!dailyMap[key]) dailyMap[key] = { feeding: 0, diaper: 0, sleep: 0, total: 0 };
       (dailyMap[key] as any)[type]++;
       dailyMap[key].total++;
@@ -318,7 +318,7 @@ export class DashboardService {
     // Daily evolution
     const daily: Record<string, { count: number; totalMl: number }> = {};
     feedings.forEach(f => {
-      const day = f.recordedAt.toISOString().split('T')[0];
+      const day = format(f.recordedAt, 'yyyy-MM-dd');
       if (!daily[day]) daily[day] = { count: 0, totalMl: 0 };
       daily[day].count++;
       daily[day].totalMl += f.amountMl || 0;
@@ -358,7 +358,7 @@ export class DashboardService {
 
     const daily: Record<string, { count: number; totalMinutes: number }> = {};
     sleeps.forEach(s => {
-      const day = s.startedAt.toISOString().split('T')[0];
+      const day = format(s.startedAt, 'yyyy-MM-dd');
       if (!daily[day]) daily[day] = { count: 0, totalMinutes: 0 };
       daily[day].count++;
       daily[day].totalMinutes += s.durationMinutes || 0;
@@ -394,7 +394,7 @@ export class DashboardService {
 
     const daily: Record<string, { pee: number; poop: number }> = {};
     diapers.forEach(d => {
-      const day = d.recordedAt.toISOString().split('T')[0];
+      const day = format(d.recordedAt, 'yyyy-MM-dd');
       if (!daily[day]) daily[day] = { pee: 0, poop: 0 };
       if (d.type === 'xixi') daily[day].pee++;
       else daily[day].poop++;

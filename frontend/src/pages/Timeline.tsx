@@ -80,8 +80,19 @@ export default function TimelinePage() {
 
   const getEventDescription = (event: TimelineEvent): string => {
     switch (event.eventType) {
-      case 'feeding':
-        return `${event.type === 'peito' ? 'Peito' : event.type === 'formula' ? 'Fórmula' : event.type}${event.amountMl ? ` — ${event.amountMl} ml` : ''}`;
+      case 'feeding': {
+        let desc = event.type === 'peito' ? 'Peito' : event.type === 'formula' ? 'Fórmula' : event.type === 'leite_ordenhado' ? 'Leite ordenhado' : event.type;
+        if (event.breastSide) {
+          desc += event.breastSide === 'esquerdo' ? ' (Esq.)' : event.breastSide === 'direito' ? ' (Dir.)' : ' (Ambos)';
+        }
+        if (event.amountMl) {
+          desc += ` — ${event.amountMl} ml`;
+        }
+        if (event.durationMinutes) {
+          desc += ` — ${event.durationMinutes} min`;
+        }
+        return desc;
+      }
       case 'food':
         return `${event.food}${event.amount ? ` — ${event.amount} ${event.unit || ''}` : ''}`;
       case 'diaper':
