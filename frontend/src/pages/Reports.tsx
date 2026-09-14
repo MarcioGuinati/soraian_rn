@@ -22,27 +22,29 @@ export default function ReportsPage() {
 
   const getDateRange = () => {
     const now = new Date();
-    const end = format(now, 'yyyy-MM-dd\'T\'23:59:59');
-    let start: string;
+    const endOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString();
+    let startOfDay: string;
+
+    const getStart = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 0, 0, 0, 0).toISOString();
+    const getEnd = (d: Date) => new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23, 59, 59, 999).toISOString();
 
     switch (period) {
       case 'today':
-        start = format(now, 'yyyy-MM-dd\'T\'00:00:00');
+        startOfDay = getStart(now);
         break;
       case 'yesterday':
         const yesterday = subDays(now, 1);
-        start = format(yesterday, 'yyyy-MM-dd\'T\'00:00:00');
-        return { startDate: start, endDate: format(yesterday, 'yyyy-MM-dd\'T\'23:59:59') };
+        return { startDate: getStart(yesterday), endDate: getEnd(yesterday) };
       case '7d':
-        start = format(subDays(now, 7), 'yyyy-MM-dd\'T\'00:00:00');
+        startOfDay = getStart(subDays(now, 7));
         break;
       case '30d':
-        start = format(subDays(now, 30), 'yyyy-MM-dd\'T\'00:00:00');
+        startOfDay = getStart(subDays(now, 30));
         break;
       default:
-        start = format(subDays(now, 7), 'yyyy-MM-dd\'T\'00:00:00');
+        startOfDay = getStart(subDays(now, 7));
     }
-    return { startDate: start, endDate: end };
+    return { startDate: startOfDay, endDate: endOfDay };
   };
 
   const loadReport = async () => {
