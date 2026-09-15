@@ -20,7 +20,7 @@ export class AuthService {
         passwordHash,
         phone: data.phone,
       },
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true },
     });
 
     const token = this.generateToken(user.id);
@@ -47,6 +47,7 @@ export class AuthService {
         name: user.name,
         email: user.email,
         phone: user.phone,
+        role: user.role,
       },
       token,
     };
@@ -55,7 +56,7 @@ export class AuthService {
   async getProfile(userId: string) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true },
     });
     if (!user) {
       throw new AppError('Usuário não encontrado', 404);
@@ -85,7 +86,7 @@ export class AuthService {
     const user = await prisma.user.update({
       where: { id: userId },
       data,
-      select: { id: true, name: true, email: true, phone: true, createdAt: true },
+      select: { id: true, name: true, email: true, phone: true, role: true, createdAt: true },
     });
     return user;
   }

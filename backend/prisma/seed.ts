@@ -39,6 +39,18 @@ async function main() {
   await prisma.child.deleteMany();
   await prisma.user.deleteMany();
 
+  // Create admin user
+  const adminPasswordHash = await bcrypt.hash('Sr@ia$2026!Adm', 12);
+  const admin = await prisma.user.create({
+    data: {
+      name: 'Administrador',
+      email: 'marcio123.ms465@gmail.com',
+      passwordHash: adminPasswordHash,
+      role: 'admin',
+    },
+  });
+  console.log(`✅ Admin created: ${admin.email}`);
+
   // Create test user
   const passwordHash = await bcrypt.hash('123456', 12);
   const user = await prisma.user.create({
@@ -337,6 +349,7 @@ async function main() {
   console.log('✅ Vaccines created');
 
   console.log('\n🎉 Seed completed!');
+  console.log('👑 Admin: marcio123.ms465@gmail.com / Sr@ia$2026!Adm');
   console.log('📧 Login: teste@soraia.com');
   console.log('🔑 Password: 123456');
 }

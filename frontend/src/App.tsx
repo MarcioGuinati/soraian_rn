@@ -3,6 +3,7 @@ import { Toaster } from 'react-hot-toast';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ChildProvider } from './contexts/ChildContext';
 import Layout from './components/layout/Layout';
+import AdminLayout from './components/layout/AdminLayout';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
 import DashboardPage from './pages/Dashboard';
@@ -15,6 +16,9 @@ import CalendarPage from './pages/Calendar';
 import HealthPage from './pages/Health';
 import RemindersPage from './pages/Reminders';
 import SettingsPage from './pages/Settings';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import AdminUsers from './pages/admin/AdminUsers';
+import AdminUserDetails from './pages/admin/AdminUserDetails';
 
 import LandingPage from './pages/Landing';
 
@@ -25,17 +29,38 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
   return <>{children}</>;
 }
 
+function AdminRoute({ children }: { children: React.ReactNode }) {
+  const { user, token, loading } = useAuth();
+  if (loading) return <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}><div className="skeleton" style={{ width: 200, height: 24 }} /></div>;
+  if (!token) return <Navigate to="/login" />;
+  if (user?.role !== 'admin') return <Navigate to="/dashboard" />;
+  return <>{children}</>;
+}
+
 function AppRoutes() {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   return (
     <Routes>
       {/* Public Landing Page */}
-      <Route path="/" element={token ? <Navigate to="/dashboard" /> : <LandingPage />} />
+      <Route path="/" element={
+        token
+          ? (user?.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />)
+          : <LandingPage />
+      } />
       
       {/* Auth */}
-      <Route path="/login" element={token ? <Navigate to="/dashboard" /> : <LoginPage />} />
+      <Route path="/login" element={
+        token
+          ? (user?.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />)
+          : <LoginPage />
+      } />
       <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <RegisterPage />} />
+
+      {/* Admin Routes */}
+      <Route path="/admin" element={<AdminRoute><AdminLayout><AdminDashboard /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/users/:id" element={<AdminRoute><AdminLayout><AdminUserDetails /></AdminLayout></AdminRoute>} />
 
       {/* App Routes */}
       <Route path="/dashboard" element={<ProtectedRoute><ChildProvider><Layout><DashboardPage /></Layout></ChildProvider></ProtectedRoute>} />
