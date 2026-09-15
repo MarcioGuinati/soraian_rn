@@ -26,7 +26,14 @@ export default function DashboardPage() {
     if (!selectedChild) return;
     try {
       setLoading(true);
-      const res = await api.get(`/children/${selectedChild.id}/dashboard`);
+      
+      const now = new Date();
+      const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).toISOString();
+      const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString();
+
+      const res = await api.get(`/children/${selectedChild.id}/dashboard`, {
+        params: { todayStart, todayEnd }
+      });
       setData(res.data.data);
     } catch (err) {
       console.error('Failed to load dashboard', err);

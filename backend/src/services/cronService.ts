@@ -71,6 +71,6 @@ export const startCronJobs = () => {
   console.log('Cron jobs started.');
 
   // Start ideal routine cron
-  const { routineService } = require('./routineService');
-  routineService.startCron();
+  // const { routineService } = require('./routineService');
+  // routineService.startCron();
 };

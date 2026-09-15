@@ -3,7 +3,8 @@ import { dashboardService } from '../services/dashboardService';
 
 export class DashboardController {
   async getDashboard(req: any, res: Response) {
-    const data = await dashboardService.getDashboard(req.params.childId, req.userId);
+    const { todayStart, todayEnd } = req.query;
+    const data = await dashboardService.getDashboard(req.params.childId, req.userId, todayStart, todayEnd);
     res.json({ status: 'success', data });
   }
 

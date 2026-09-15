@@ -3,12 +3,12 @@ import { childService } from './childService';
 import { startOfDay, endOfDay, subDays, startOfMonth, endOfMonth, format } from 'date-fns';
 
 export class DashboardService {
-  async getDashboard(childId: string, userId: string) {
+  async getDashboard(childId: string, userId: string, todayStartStr?: string, todayEndStr?: string) {
     await childService.verifyOwnership(childId, userId);
 
     const now = new Date();
-    const todayStart = startOfDay(now);
-    const todayEnd = endOfDay(now);
+    const todayStart = todayStartStr ? new Date(todayStartStr) : startOfDay(now);
+    const todayEnd = todayEndStr ? new Date(todayEndStr) : endOfDay(now);
 
     const [
       feedings,
