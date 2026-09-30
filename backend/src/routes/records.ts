@@ -62,4 +62,9 @@ router.post('/children/:childId/notes', (req, res, next) => recordController.cre
 router.put('/notes/:id', (req, res, next) => recordController.updateNote(req, res).catch(next));
 router.delete('/notes/:id', (req, res, next) => recordController.deleteNote(req, res).catch(next));
 
+// VACCINES
+router.get('/children/:childId/vaccines', (req, res, next) => recordController.getVaccines(req, res).catch(next));
+router.post('/children/:childId/vaccines', (req, res, next) => recordController.createVaccine(req, res).catch(next));
+router.delete('/vaccines/:id', (req, res, next) => recordController.deleteVaccine(req, res).catch(next));
+
 export default router;

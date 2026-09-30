@@ -19,6 +19,7 @@ export default function MorePage() {
     { icon: '👶', label: 'Crianças', desc: 'Gerenciar crianças cadastradas', path: '/children' },
     { icon: '📅', label: 'Calendário', desc: 'Visualizar eventos por data', path: '/calendar' },
     { icon: '❤️', label: 'Saúde', desc: 'Consultas, vacinas e medidas', path: '/health' },
+    { icon: '💉', label: 'Vacinas (SUS)', desc: 'Calendário nacional de vacinação', path: '/vaccines-sus' },
     { icon: '🔔', label: 'Lembretes', desc: 'Gerenciar lembretes', path: '/reminders' },
     { icon: '⚙️', label: 'Configurações', desc: 'Perfil e preferências', path: '/settings' },
   ];

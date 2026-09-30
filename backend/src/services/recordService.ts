@@ -428,6 +428,37 @@ export class RecordService {
     await childService.verifyOwnership(record.childId, userId);
     return prisma.note.delete({ where: { id } });
   }
+
+  // ============ VACCINE ============
+  async createVaccine(childId: string, userId: string, data: any) {
+    await childService.verifyOwnership(childId, userId);
+    return prisma.vaccine.create({
+      data: {
+        childId,
+        name: data.name,
+        dose: data.dose,
+        date: new Date(data.date),
+        batch: data.batch,
+        location: data.location,
+        notes: data.notes,
+      },
+    });
+  }
+
+  async getVaccines(childId: string, userId: string) {
+    await childService.verifyOwnership(childId, userId);
+    return prisma.vaccine.findMany({
+      where: { childId },
+      orderBy: { date: 'desc' }
+    });
+  }
+
+  async deleteVaccine(id: string, userId: string) {
+    const record = await prisma.vaccine.findUnique({ where: { id } });
+    if (!record) throw new Error('Registro não encontrado');
+    await childService.verifyOwnership(record.childId, userId);
+    return prisma.vaccine.delete({ where: { id } });
+  }
 }
 
 export const recordService = new RecordService();

@@ -180,6 +180,20 @@ export class RecordController {
     await recordService.deleteNote(req.params.id, req.userId);
     res.json({ status: 'success', message: 'Registro removido' });
   }
+
+  // VACCINES
+  async createVaccine(req: any, res: Response) {
+    const record = await recordService.createVaccine(req.params.childId, req.userId, req.body);
+    res.status(201).json({ status: 'success', data: record });
+  }
+  async getVaccines(req: any, res: Response) {
+    const records = await recordService.getVaccines(req.params.childId, req.userId);
+    res.json({ status: 'success', data: records });
+  }
+  async deleteVaccine(req: any, res: Response) {
+    await recordService.deleteVaccine(req.params.id, req.userId);
+    res.json({ status: 'success', message: 'Registro removido' });
+  }
 }
 
 export const recordController = new RecordController();

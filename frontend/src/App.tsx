@@ -14,6 +14,7 @@ import MorePage from './pages/More';
 import ChildrenPage from './pages/Children';
 import CalendarPage from './pages/Calendar';
 import HealthPage from './pages/Health';
+import VaccineCalendarPage from './pages/VaccineCalendar';
 import RemindersPage from './pages/Reminders';
 import SettingsPage from './pages/Settings';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -72,6 +73,7 @@ function AppRoutes() {
       <Route path="/children/new" element={<ProtectedRoute><ChildProvider><Layout><ChildrenPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/calendar" element={<ProtectedRoute><ChildProvider><Layout><CalendarPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/health" element={<ProtectedRoute><ChildProvider><Layout><HealthPage /></Layout></ChildProvider></ProtectedRoute>} />
+      <Route path="/vaccines-sus" element={<ProtectedRoute><ChildProvider><Layout><VaccineCalendarPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/reminders" element={<ProtectedRoute><ChildProvider><Layout><RemindersPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><ChildProvider><Layout><SettingsPage /></Layout></ChildProvider></ProtectedRoute>} />
 
