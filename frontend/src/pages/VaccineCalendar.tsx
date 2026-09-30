@@ -84,6 +84,7 @@ export default function VaccineCalendarPage() {
   const [loading, setLoading] = useState(true);
   const [records, setRecords] = useState<Vaccine[]>([]);
   const [selectedVac, setSelectedVac] = useState<{name: string, dose: string} | null>(null);
+  const [vaccineToDelete, setVaccineToDelete] = useState<string | null>(null);
 
   // Form
   const [vacDate, setVacDate] = useState(new Date().toISOString().split('T')[0]);
@@ -124,6 +125,20 @@ export default function VaccineCalendarPage() {
       toast.error('Erro ao registrar vacina');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!vaccineToDelete) return;
+    try {
+      setLoading(true);
+      await api.delete(`/vaccines/${vaccineToDelete}`);
+      toast.success('Vacina desmarcada!');
+      setVaccineToDelete(null);
+      loadVaccines();
+    } catch {
+      toast.error('Erro ao desmarcar vacina');
+      setLoading(false);
     }
   };
 
@@ -182,7 +197,14 @@ export default function VaccineCalendarPage() {
                           {!isGiven ? (
                             <button className="btn btn-primary btn-sm" onClick={() => setSelectedVac({name: v.name, dose: v.dose})}>Registrar</button>
                           ) : (
-                            <span className="vac-icon-check">✓</span>
+                            <button 
+                              className="btn btn-ghost btn-sm" 
+                              style={{ padding: 0, borderRadius: '50%' }} 
+                              onClick={() => setVaccineToDelete(record!.id)} 
+                              title="Desmarcar vacina"
+                            >
+                              <span className="vac-icon-check" style={{ cursor: 'pointer' }}>✓</span>
+                            </button>
                           )}
                         </div>
                       </div>
@@ -213,6 +235,22 @@ export default function VaccineCalendarPage() {
               <div style={{ display: 'flex', gap: 8, marginTop: 24 }}>
                 <button className="btn btn-secondary btn-block" onClick={() => setSelectedVac(null)} disabled={saving}>Cancelar</button>
                 <button className="btn btn-primary btn-block" onClick={handleSave} disabled={saving}>{saving ? 'Salvando...' : 'Confirmar'}</button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Modal for Deleting */}
+        {vaccineToDelete && (
+          <div className="vac-modal-overlay">
+            <div className="vac-modal animate-fade-in">
+              <h3 className="vac-modal-title" style={{ color: 'var(--color-danger)' }}>Atenção</h3>
+              <p style={{ marginBottom: 24, color: 'var(--color-text)' }}>
+                Tem certeza que deseja desmarcar essa vacina?
+              </p>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button className="btn btn-secondary btn-block" onClick={() => setVaccineToDelete(null)} disabled={saving}>Cancelar</button>
+                <button className="btn btn-danger btn-block" onClick={handleDelete} disabled={saving}>Desmarcar</button>
               </div>
             </div>
           </div>
