@@ -34,7 +34,14 @@ export class DashboardService {
         orderBy: { recordedAt: 'desc' },
       }),
       prisma.sleepRecord.findMany({
-        where: { childId, startedAt: { gte: todayStart, lte: todayEnd } },
+        where: {
+          childId,
+          OR: [
+            { startedAt: { gte: todayStart, lte: todayEnd } },
+            { endedAt: { gte: todayStart, lte: todayEnd } },
+            { startedAt: { lt: todayStart }, isActive: true }
+          ]
+        },
         orderBy: { startedAt: 'desc' },
       }),
       prisma.bathRecord.findMany({
@@ -60,7 +67,17 @@ export class DashboardService {
     ]);
 
     const totalMl = feedings.reduce((sum, f) => sum + (f.amountMl || 0), 0);
-    const totalSleepMinutes = sleeps.reduce((sum, s) => sum + (s.durationMinutes || 0), 0);
+    
+    let totalSleepMinutes = 0;
+    sleeps.forEach(s => {
+      let start = s.startedAt < todayStart ? todayStart : s.startedAt;
+      let end = s.endedAt || new Date();
+      if (end > todayEnd) end = todayEnd;
+      if (end > start) {
+        totalSleepMinutes += Math.round((end.getTime() - start.getTime()) / 60000);
+      }
+    });
+
     const peeCount = diapers.filter(d => d.type === 'xixi').length;
     const poopCount = diapers.filter(d => d.type === 'coco').length;
 
@@ -358,10 +375,29 @@ export class DashboardService {
 
     const daily: Record<string, { count: number; totalMinutes: number }> = {};
     sleeps.forEach(s => {
-      const day = format(s.startedAt, 'yyyy-MM-dd');
-      if (!daily[day]) daily[day] = { count: 0, totalMinutes: 0 };
-      daily[day].count++;
-      daily[day].totalMinutes += s.durationMinutes || 0;
+      if (s.endedAt && format(s.startedAt, 'yyyy-MM-dd') !== format(s.endedAt, 'yyyy-MM-dd')) {
+        // Sleep crosses midnight
+        const midnight = new Date(s.startedAt);
+        midnight.setHours(24, 0, 0, 0); // start of next day
+        const minutesBeforeMidnight = Math.round((midnight.getTime() - s.startedAt.getTime()) / 60000);
+        const minutesAfterMidnight = Math.round((s.endedAt.getTime() - midnight.getTime()) / 60000);
+
+        const day1 = format(s.startedAt, 'yyyy-MM-dd');
+        if (!daily[day1]) daily[day1] = { count: 0, totalMinutes: 0 };
+        daily[day1].count++; 
+        daily[day1].totalMinutes += minutesBeforeMidnight;
+
+        const day2 = format(s.endedAt, 'yyyy-MM-dd');
+        if (!daily[day2]) daily[day2] = { count: 0, totalMinutes: 0 };
+        // We don't increment count here to avoid double counting the same session, 
+        // but we add the minutes so the daily total is correct.
+        daily[day2].totalMinutes += minutesAfterMidnight;
+      } else {
+        const day = format(s.startedAt, 'yyyy-MM-dd');
+        if (!daily[day]) daily[day] = { count: 0, totalMinutes: 0 };
+        daily[day].count++;
+        daily[day].totalMinutes += s.durationMinutes || 0;
+      }
     });
 
     return {

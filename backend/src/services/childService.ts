@@ -48,11 +48,16 @@ export class ChildService {
     parentNames?: string;
     notes?: string;
   }) {
+    const birthDate = new Date(data.birthDate);
+    if (isNaN(birthDate.getTime())) {
+      throw new AppError('Data de nascimento inválida', 400);
+    }
+
     return prisma.child.create({
       data: {
         userId,
         name: data.name,
-        birthDate: new Date(data.birthDate),
+        birthDate,
         gender: data.gender,
         photo: data.photo,
         birthWeight: data.birthWeight,
@@ -70,7 +75,11 @@ export class ChildService {
     await this.verifyAccess(id, userId);
 
     if (data.birthDate) {
-      data.birthDate = new Date(data.birthDate);
+      const birthDate = new Date(data.birthDate);
+      if (isNaN(birthDate.getTime())) {
+        throw new AppError('Data de nascimento inválida', 400);
+      }
+      data.birthDate = birthDate;
     }
 
     return prisma.child.update({

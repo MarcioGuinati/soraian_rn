@@ -314,15 +314,13 @@ export default function QuickRegisterPage() {
               </div>
             )}
             {!isEdit && <p className="qr-divider-text">ou registrar manualmente:</p>}
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Dormiu às</label>
-                <input type="datetime-local" className="form-input" value={sleepStartedAt} onChange={e => setSleepStartedAt(e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Acordou às</label>
-                <input type="datetime-local" className="form-input" value={sleepEndedAt} onChange={e => setSleepEndedAt(e.target.value)} />
-              </div>
+            <div className="form-group">
+              <label className="form-label">Dormiu às</label>
+              <input type="datetime-local" className="form-input" value={sleepStartedAt} onChange={e => setSleepStartedAt(e.target.value)} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">Acordou às</label>
+              <input type="datetime-local" className="form-input" value={sleepEndedAt} onChange={e => setSleepEndedAt(e.target.value)} />
             </div>
             <div className="form-group">
               <label className="form-label">Local</label>
