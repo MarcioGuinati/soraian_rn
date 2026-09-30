@@ -63,6 +63,13 @@ export default function ReportsPage() {
     }
   };
 
+  const formatDateBR = (dateStr: string) => {
+    if (!dateStr) return '';
+    const parts = dateStr.split('-');
+    if (parts.length !== 3) return dateStr;
+    return `${parts[2]}/${parts[1]}/${parts[0]}`;
+  };
+
   const renderFeedingReport = () => {
     if (!data) return null;
     const typeData = Object.entries(data.byType || {}).map(([name, value]) => ({
@@ -83,9 +90,9 @@ export default function ReportsPage() {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={data.daily}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-light)" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => formatDateBR(v).substring(0, 5)} />
                 <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
+                <Tooltip labelFormatter={(label) => formatDateBR(label as string)} />
                 <Bar dataKey="totalMl" fill="var(--color-feeding)" radius={[6, 6, 0, 0]} name="ml" />
               </BarChart>
             </ResponsiveContainer>
@@ -126,9 +133,9 @@ export default function ReportsPage() {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={data.daily}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-light)" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => formatDateBR(v).substring(0, 5)} />
                 <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
+                <Tooltip labelFormatter={(label) => formatDateBR(label as string)} />
                 <Bar dataKey="totalMinutes" fill="var(--color-sleep)" radius={[6, 6, 0, 0]} name="min" />
               </BarChart>
             </ResponsiveContainer>
@@ -165,9 +172,9 @@ export default function ReportsPage() {
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={data.daily}>
                 <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-light)" />
-                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
+                <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => formatDateBR(v).substring(0, 5)} />
                 <YAxis tick={{ fontSize: 11 }} />
-                <Tooltip />
+                <Tooltip labelFormatter={(label) => formatDateBR(label as string)} />
                 <Bar dataKey="pee" fill="var(--color-diaper-pee)" radius={[6, 6, 0, 0]} name="Xixi" stackId="a" />
                 <Bar dataKey="poop" fill="var(--color-diaper-poop)" radius={[6, 6, 0, 0]} name="Cocô" stackId="a" />
                 <Legend />
@@ -187,9 +194,9 @@ export default function ReportsPage() {
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={data.records}>
             <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border-light)" />
-            <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => v.slice(5)} />
+            <XAxis dataKey="date" tick={{ fontSize: 11 }} tickFormatter={(v) => formatDateBR(v).substring(0, 5)} />
             <YAxis tick={{ fontSize: 11 }} domain={['auto', 'auto']} />
-            <Tooltip />
+            <Tooltip labelFormatter={(label) => formatDateBR(label as string)} />
             <Line type="monotone" dataKey="weight" stroke="var(--color-weight)" strokeWidth={3} dot={{ fill: 'var(--color-weight)', r: 5 }} name="Peso (kg)" />
             {data.records[0]?.height && <Line type="monotone" dataKey="height" stroke="var(--color-primary)" strokeWidth={2} dot={{ r: 4 }} name="Altura (cm)" />}
           </LineChart>
