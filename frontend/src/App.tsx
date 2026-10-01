@@ -17,6 +17,7 @@ import HealthPage from './pages/Health';
 import VaccineCalendarPage from './pages/VaccineCalendar';
 import RemindersPage from './pages/Reminders';
 import SettingsPage from './pages/Settings';
+import SleepTipsPage from './pages/SleepTips';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminUserDetails from './pages/admin/AdminUserDetails';
@@ -75,6 +76,7 @@ function AppRoutes() {
       <Route path="/health" element={<ProtectedRoute><ChildProvider><Layout><HealthPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/vaccines-sus" element={<ProtectedRoute><ChildProvider><Layout><VaccineCalendarPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/reminders" element={<ProtectedRoute><ChildProvider><Layout><RemindersPage /></Layout></ChildProvider></ProtectedRoute>} />
+      <Route path="/sleep-tips" element={<ProtectedRoute><ChildProvider><Layout><SleepTipsPage /></Layout></ChildProvider></ProtectedRoute>} />
       <Route path="/settings" element={<ProtectedRoute><ChildProvider><Layout><SettingsPage /></Layout></ChildProvider></ProtectedRoute>} />
 
       <Route path="*" element={<Navigate to="/" />} />
