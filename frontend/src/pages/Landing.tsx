@@ -20,7 +20,7 @@ export default function LandingPage() {
     <div className="min-h-screen bg-[#0F1024] text-white font-sans overflow-x-hidden selection:bg-[#7C3AED]/30">
       {/* Header */}
       <header className="fixed top-0 w-full z-50 bg-[#0F1024]/80 backdrop-blur-md border-b border-white/5 h-16 flex items-center">
-        <div className="container mx-auto px-4 max-w-[1200px] flex items-center justify-between">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px] flex items-center justify-between">
           <div className="flex items-center gap-2">
             <img src="/logo.png" alt="Nuna" className="w-8 h-8 rounded-lg shadow-sm" />
             <span className="font-extrabold text-xl tracking-tight text-white">NUNA</span>
@@ -64,7 +64,7 @@ export default function LandingPage() {
       <section className="pt-24 pb-16 md:pt-32 md:pb-20 relative min-h-[520px] md:min-h-[580px] flex items-center">
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#7C3AED]/20 blur-[120px] rounded-full pointer-events-none -z-10" />
         
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="grid md:grid-cols-2 gap-10 items-center">
             
             <div className="flex flex-col items-start text-left animate-in fade-in slide-in-from-bottom-4 duration-700">
@@ -122,7 +122,7 @@ export default function LandingPage() {
 
       {/* Funcionalidades */}
       <section id="recursos" className="py-16 md:py-24 bg-[#151630]/50 border-y border-white/5">
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="text-center max-w-[600px] mx-auto mb-16">
             <h2 className="text-[32px] md:text-[40px] font-bold tracking-tight mb-4">Tudo o que você precisa em um só lugar</h2>
             <p className="text-[17px] text-[#A7A8C2] font-medium">Você foca no que realmente importa: cuidar. O NUNA ajuda a organizar os detalhes da rotina do bebê.</p>
@@ -218,7 +218,7 @@ export default function LandingPage() {
 
       {/* Como Funciona */}
       <section id="como-funciona" className="py-16 md:py-24">
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="text-center max-w-[600px] mx-auto mb-16">
             <h2 className="text-[32px] md:text-[40px] font-bold tracking-tight mb-4">Simples para registrar. Útil para acompanhar.</h2>
           </div>
@@ -245,7 +245,7 @@ export default function LandingPage() {
 
       {/* Demonstração Interativa */}
       <section id="demo" className="py-16 md:py-24 bg-[#151630]/50 border-y border-white/5">
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="grid lg:grid-cols-2 gap-16 items-center">
             <div>
               <h2 className="text-[32px] md:text-[40px] font-bold tracking-tight mb-6">Veja o NUNA em ação</h2>
@@ -414,7 +414,7 @@ export default function LandingPage() {
 
       {/* Rotina Real */}
       <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="text-center max-w-[600px] mx-auto mb-16">
             <h2 className="text-[32px] md:text-[40px] font-bold tracking-tight mb-4">Feito para a rotina real.</h2>
           </div>
@@ -442,7 +442,7 @@ export default function LandingPage() {
 
       {/* Segurança */}
       <section id="seguranca" className="py-16 bg-[#151630]/30 border-y border-white/5">
-        <div className="container mx-auto px-4 max-w-[1200px] text-center">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px] text-center">
           <Lock size={32} className="mx-auto text-[#7C3AED] mb-4" />
           <h2 className="text-2xl md:text-3xl font-bold mb-4">Os momentos do seu bebê merecem cuidado.</h2>
           <div className="flex flex-wrap justify-center gap-x-8 gap-y-4 text-sm text-[#A7A8C2] font-medium">
@@ -456,7 +456,7 @@ export default function LandingPage() {
 
       {/* FAQ */}
       <section className="py-16 md:py-24">
-        <div className="container mx-auto px-4 max-w-[800px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[800px]">
           <div className="text-center mb-12">
             <h2 className="text-[32px] md:text-[40px] font-bold tracking-tight">Dúvidas Frequentes</h2>
           </div>
@@ -491,7 +491,7 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Final */}
-      <section className="py-16 md:py-24 px-4 relative overflow-hidden bg-[#151630]/50 border-t border-white/5">
+      <section className="py-16 md:py-24 px-6 md:px-12 lg:px-16 relative overflow-hidden bg-[#151630]/50 border-t border-white/5">
         <div className="absolute inset-0 bg-[#7C3AED]/5 blur-[100px] -z-10" />
         <div className="container mx-auto max-w-[800px] text-center">
           <Heart size={40} className="mx-auto mb-6 text-[#7C3AED] animate-pulse" fill="currentColor" />
@@ -509,7 +509,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-white/5 bg-[#0F1024] py-12">
-        <div className="container mx-auto px-4 max-w-[1200px]">
+        <div className="container mx-auto px-6 md:px-12 lg:px-16 max-w-[1200px]">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 md:gap-12 mb-12">
             <div className="col-span-1 md:col-span-2">
               <div className="flex items-center gap-2 mb-4">
