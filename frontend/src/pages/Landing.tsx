@@ -81,13 +81,12 @@ export default function LandingPage() {
           </p>
 
           <div className="flex flex-col md:flex-row space-y-4 md:space-y-0 md:space-x-4 pt-4">
-            <Button className="w-full md:w-1/2 h-12 text-base font-bold bg-[#7C3AED] hover:bg-[#8B5CF6] text-white transition-all shadow-lg shadow-[#7C3AED]/20" onClick={() => navigate('/register')}>
-              Acessar Web App
+            <Button className="w-full md:w-auto px-8 h-12 text-base font-bold bg-[#7C3AED] hover:bg-[#8B5CF6] text-white transition-all shadow-lg shadow-[#7C3AED]/20" onClick={() => navigate('/register')}>
+              Criar Conta Gratuita
             </Button>
 
-            <Button variant="outline" className="w-full md:w-1/2 h-12 text-base font-semibold border-white/20 text-white hover:bg-white/10 hover:text-white transition-all flex items-center bg-transparent" onClick={() => window.open('https://play.google.com/store', '_blank')}>
-              <Play className="w-4 h-4 mr-2 fill-current text-[#A7A8C2]" />
-              No Google Play
+            <Button variant="outline" className="w-full md:w-auto px-8 h-12 text-base font-semibold border-white/20 text-white hover:bg-white/10 hover:text-white transition-all flex items-center bg-transparent" onClick={() => window.open('https://github.com/MarcioGuinati/soraian_rn', '_blank')}>
+              Ver Funcionalidades
             </Button>
           </div>
           
@@ -107,15 +106,81 @@ export default function LandingPage() {
                 <Star size={12} fill="currentColor" strokeWidth={0} />
                 <Star size={12} fill="currentColor" strokeWidth={0} />
               </div>
-              <span className="text-[12px] font-medium text-[#A7A8C2] mt-0.5">Mais de 2.000 famílias</span>
+              <span className="text-[12px] font-medium text-[#A7A8C2] mt-0.5">Mais de 2.000 famílias confiam</span>
             </div>
           </div>
         </div>
 
-        {/* Hero Image */}
-        <div className="z-10 relative mt-10 lg:mt-0">
+        {/* Hero Cards (SaaS Look) */}
+        <div className="z-10 relative mt-10 lg:mt-0 w-full hidden md:block">
           <div className="absolute inset-0 bg-[#7C3AED]/20 blur-[80px] rounded-full pointer-events-none" />
-          <img src="/ilustracao-bebe-ursinho-soraia.png" alt="Bebê com ursinho" className="relative z-10 w-[300px] lg:w-[420px] object-contain drop-shadow-2xl" />
+          
+          <div className="relative w-full h-[450px]">
+            {/* Card 1: Resumo */}
+            <Card className="absolute top-4 right-4 w-[320px] bg-[#151630] border-white/10 shadow-2xl">
+              <CardHeader className="pb-2">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 flex items-center justify-center text-[#8B5CF6]"><LineChart size={16}/></div>
+                  <div>
+                    <CardTitle className="text-white text-base">Resumo de Hoje</CardTitle>
+                    <p className="text-xs text-[#A7A8C2]">Atualizado agora</p>
+                  </div>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="bg-[#0F1024] rounded-lg p-2 text-center border border-white/5">
+                    <div className="text-lg font-bold text-[#7C3AED]">6</div>
+                    <div className="text-[10px] text-[#A7A8C2] font-medium">Mamadas</div>
+                  </div>
+                  <div className="bg-[#0F1024] rounded-lg p-2 text-center border border-white/5">
+                    <div className="text-lg font-bold text-blue-400">8h</div>
+                    <div className="text-[10px] text-[#A7A8C2] font-medium">Sono</div>
+                  </div>
+                  <div className="bg-[#0F1024] rounded-lg p-2 text-center border border-white/5">
+                    <div className="text-lg font-bold text-orange-400">5</div>
+                    <div className="text-[10px] text-[#A7A8C2] font-medium">Fraldas</div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Card 2: Alerta/Atividade */}
+            <Card className="absolute bottom-12 left-0 w-[280px] bg-[#151630] border-white/10 shadow-2xl z-20">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-white text-sm flex items-center justify-between">
+                  Próxima Soneca
+                  <Badge variant="secondary" className="bg-[#7C3AED]/20 text-[#8B5CF6] hover:bg-[#7C3AED]/30">Em 30 min</Badge>
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-center gap-3">
+                  <Moon size={24} className="text-blue-400" />
+                  <div>
+                    <p className="text-sm font-medium text-white">Janela de Sono</p>
+                    <p className="text-xs text-[#A7A8C2]">Baseado no padrão dos últimos 3 dias</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Card 3: Gráfico/Crescimento */}
+            <Card className="absolute top-1/3 left-12 w-[260px] bg-[#151630] border-white/10 shadow-2xl z-10">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-white text-sm">Crescimento</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-20 flex items-end gap-2">
+                  <div className="w-1/4 bg-[#7C3AED]/20 rounded-t-sm h-1/2"></div>
+                  <div className="w-1/4 bg-[#7C3AED]/40 rounded-t-sm h-2/3"></div>
+                  <div className="w-1/4 bg-[#7C3AED]/60 rounded-t-sm h-3/4"></div>
+                  <div className="w-1/4 bg-[#7C3AED] rounded-t-sm h-full relative">
+                    <span className="absolute -top-5 left-1/2 -translate-x-1/2 text-[10px] font-bold text-white">5.2kg</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </section>
 
@@ -356,63 +421,105 @@ export default function LandingPage() {
               </Tabs>
             </div>
 
-            {/* Mockup */}
-            <div className="relative mx-auto w-full max-w-[320px]">
+            {/* Mockup (Web App Look) */}
+            <div className="relative mx-auto w-full lg:col-span-2 mt-8 lg:mt-0">
               <div className="absolute inset-0 bg-[#7C3AED]/20 blur-[60px] rounded-full" />
-              <div className="relative bg-[#0F1024] border-[6px] border-[#151630] rounded-[40px] h-[640px] w-full overflow-hidden shadow-2xl flex flex-col">
-                {/* Status bar fake */}
-                <div className="h-6 w-full flex justify-between items-center px-6 pt-2">
-                  <span className="text-[10px] font-medium">9:41</span>
-                  <div className="flex gap-1">
-                    <div className="w-3 h-3 rounded-full bg-white/20" />
-                    <div className="w-3 h-3 rounded-full bg-white/20" />
+              <div className="relative bg-[#0F1024] border border-[#2a2c4e] rounded-xl w-full overflow-hidden shadow-2xl flex flex-col hidden md:flex h-[500px]">
+                {/* Browser fake header */}
+                <div className="h-10 w-full flex items-center px-4 bg-[#151630] border-b border-[#2a2c4e] gap-2">
+                  <div className="flex gap-1.5">
+                    <div className="w-3 h-3 rounded-full bg-red-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-yellow-500/80" />
+                    <div className="w-3 h-3 rounded-full bg-green-500/80" />
+                  </div>
+                  <div className="ml-4 px-3 py-1 bg-[#0F1024] rounded-md text-xs text-[#A7A8C2] border border-white/5 w-[200px]">
+                    app.nuna.care
                   </div>
                 </div>
                 
-                <div className="p-6 flex-1 flex flex-col">
-                  <h3 className="text-xl font-bold mb-1">Bom dia, família 💜</h3>
-                  <p className="text-sm text-[#A7A8C2] mb-6">Resumo de hoje</p>
-                  
-                  <div className="grid grid-cols-3 gap-3 mb-6">
-                    <div className="bg-[#151630] rounded-xl p-3 text-center border border-white/5">
-                      <div className="text-xl font-bold text-[#7C3AED] mb-1">6</div>
-                      <div className="text-[10px] text-[#A7A8C2] uppercase font-bold tracking-wider">Mamadas</div>
+                {/* Dashboard layout */}
+                <div className="flex-1 flex">
+                  {/* Sidebar */}
+                  <div className="w-[200px] border-r border-[#2a2c4e] bg-[#151630]/50 p-4 space-y-4">
+                    <div className="flex items-center gap-2 mb-8">
+                      <div className="w-6 h-6 rounded bg-[#7C3AED] flex items-center justify-center"><Baby size={14} className="text-white"/></div>
+                      <span className="font-bold text-sm">Dashboard</span>
                     </div>
-                    <div className="bg-[#151630] rounded-xl p-3 text-center border border-white/5">
-                      <div className="text-xl font-bold text-blue-400 mb-1">8h</div>
-                      <div className="text-[10px] text-[#A7A8C2] uppercase font-bold tracking-wider">Sono</div>
-                    </div>
-                    <div className="bg-[#151630] rounded-xl p-3 text-center border border-white/5">
-                      <div className="text-xl font-bold text-orange-400 mb-1">5</div>
-                      <div className="text-[10px] text-[#A7A8C2] uppercase font-bold tracking-wider">Fraldas</div>
+                    <div className="space-y-2">
+                      <div className="px-3 py-2 bg-[#7C3AED]/20 text-[#8B5CF6] rounded-md text-xs font-bold flex items-center gap-2">
+                        <LineChart size={14}/> Visão Geral
+                      </div>
+                      <div className="px-3 py-2 text-[#A7A8C2] hover:bg-white/5 rounded-md text-xs font-medium flex items-center gap-2">
+                        <Baby size={14}/> Mamadas
+                      </div>
+                      <div className="px-3 py-2 text-[#A7A8C2] hover:bg-white/5 rounded-md text-xs font-medium flex items-center gap-2">
+                        <Moon size={14}/> Sono
+                      </div>
                     </div>
                   </div>
 
-                  <h4 className="text-sm font-bold mb-3">Atividades recentes</h4>
-                  <div className="space-y-3 flex-1">
-                    <div className="flex items-center gap-3 bg-[#151630] p-3 rounded-xl border border-white/5">
-                      <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 flex items-center justify-center text-[#8B5CF6]"><Baby size={14}/></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-bold">Mamadeira</div>
-                        <div className="text-xs text-[#A7A8C2]">120ml • Leite materno</div>
+                  {/* Main Content */}
+                  <div className="flex-1 p-6 flex flex-col gap-6 overflow-hidden">
+                    <div className="flex justify-between items-end">
+                      <div>
+                        <h3 className="text-xl font-bold mb-1">Visão Geral de Hoje</h3>
+                        <p className="text-xs text-[#A7A8C2]">Atualizado há 5 min</p>
                       </div>
-                      <div className="text-xs text-[#A7A8C2]">08:32</div>
+                      <Button size="sm" className="bg-[#7C3AED] h-8 text-xs font-bold">+ Novo Registro</Button>
                     </div>
-                    <div className="flex items-center gap-3 bg-[#151630] p-3 rounded-xl border border-white/5">
-                      <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><Moon size={14}/></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-bold">Sono</div>
-                        <div className="text-xs text-[#A7A8C2]">Soneca da manhã</div>
+                    
+                    {/* Metrics */}
+                    <div className="grid grid-cols-4 gap-4">
+                      <div className="bg-[#151630] rounded-xl p-4 border border-white/5 shadow-md">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Baby size={14} className="text-[#8B5CF6]"/>
+                          <span className="text-xs text-[#A7A8C2] font-medium uppercase">Mamadas</span>
+                        </div>
+                        <div className="text-2xl font-bold">6</div>
+                        <div className="text-[10px] text-green-400 mt-1">Total de 45 min</div>
                       </div>
-                      <div className="text-xs text-[#A7A8C2]">07:15</div>
+                      <div className="bg-[#151630] rounded-xl p-4 border border-white/5 shadow-md">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Moon size={14} className="text-blue-400"/>
+                          <span className="text-xs text-[#A7A8C2] font-medium uppercase">Sono</span>
+                        </div>
+                        <div className="text-2xl font-bold">8h 20m</div>
+                        <div className="text-[10px] text-[#A7A8C2] mt-1">2 sonecas</div>
+                      </div>
+                      <div className="bg-[#151630] rounded-xl p-4 border border-white/5 shadow-md">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Baby size={14} className="text-orange-400"/>
+                          <span className="text-xs text-[#A7A8C2] font-medium uppercase">Fraldas</span>
+                        </div>
+                        <div className="text-2xl font-bold">5</div>
+                        <div className="text-[10px] text-[#A7A8C2] mt-1">2 trocas recentes</div>
+                      </div>
+                      <div className="bg-[#151630] rounded-xl p-4 border border-white/5 shadow-md flex items-center justify-center">
+                        <LineChart className="text-[#A7A8C2]/30 w-12 h-12" />
+                      </div>
                     </div>
-                    <div className="flex items-center gap-3 bg-[#151630] p-3 rounded-xl border border-white/5">
-                      <div className="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-orange-400"><Baby size={14}/></div>
-                      <div className="flex-1">
-                        <div className="text-sm font-bold">Fralda</div>
-                        <div className="text-xs text-[#A7A8C2]">Xixi e Cocô</div>
+
+                    {/* Timeline */}
+                    <div className="flex-1 bg-[#151630] rounded-xl border border-white/5 p-4 flex flex-col">
+                      <h4 className="text-xs font-bold text-[#A7A8C2] mb-4 uppercase">Últimos Registros</h4>
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 flex items-center justify-center text-[#8B5CF6]"><Baby size={14}/></div>
+                          <div className="flex-1">
+                            <div className="text-sm font-bold">Mamadeira (120ml)</div>
+                            <div className="text-xs text-[#A7A8C2]">Leite materno</div>
+                          </div>
+                          <div className="text-xs text-[#A7A8C2]">08:32</div>
+                        </div>
+                        <div className="flex items-center gap-4">
+                          <div className="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-blue-400"><Moon size={14}/></div>
+                          <div className="flex-1">
+                            <div className="text-sm font-bold">Acordou da soneca</div>
+                            <div className="text-xs text-[#A7A8C2]">Duração: 45m</div>
+                          </div>
+                          <div className="text-xs text-[#A7A8C2]">07:15</div>
+                        </div>
                       </div>
-                      <div className="text-xs text-[#A7A8C2]">06:40</div>
                     </div>
                   </div>
                 </div>
