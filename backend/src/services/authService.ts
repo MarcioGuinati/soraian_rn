@@ -3,7 +3,8 @@ import jwt from 'jsonwebtoken';
 import prisma from '../config/database';
 import { env } from '../config/env';
 import { AppError } from '../middlewares/errorHandler';
-
+import crypto from 'crypto';
+import { sendPasswordResetEmail } from './emailService';
 export class AuthService {
   async register(data: { name: string; email: string; password: string; phone?: string }) {
     const existing = await prisma.user.findUnique({ where: { email: data.email } });
@@ -94,6 +95,71 @@ export class AuthService {
   private generateToken(userId: string): string {
     return jwt.sign({ userId }, env.JWT_SECRET, {
       expiresIn: env.JWT_EXPIRES_IN as any,
+    });
+  }
+
+  async forgotPassword(email: string, frontendUrl: string) {
+    const user = await prisma.user.findUnique({ where: { email } });
+    if (!user) {
+      // Não queremos vazar se o e-mail existe ou não, então sempre retornamos sucesso
+      return;
+    }
+
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    const resetPasswordExpires = new Date(Date.now() + 3600000); // 1 hora de validade
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        resetPasswordToken: resetToken,
+        resetPasswordExpires,
+      },
+    });
+
+    try {
+      await sendPasswordResetEmail(user.email, resetToken, frontendUrl);
+      await prisma.emailLog.create({
+        data: {
+          email: user.email,
+          type: 'PASSWORD_RESET',
+          status: 'SUCCESS',
+        }
+      });
+    } catch (error: any) {
+      await prisma.emailLog.create({
+        data: {
+          email: user.email,
+          type: 'PASSWORD_RESET',
+          status: 'FAILED',
+          errorMsg: error.message || 'Erro desconhecido',
+        }
+      });
+      // Opcional: Relançar o erro se quiser que a requisição de API falhe
+      throw new AppError('Falha ao enviar e-mail de recuperação', 500);
+    }
+  }
+
+  async resetPassword(token: string, newPassword: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        resetPasswordToken: token,
+        resetPasswordExpires: { gt: new Date() },
+      },
+    });
+
+    if (!user) {
+      throw new AppError('Token inválido ou expirado', 400);
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 12);
+
+    await prisma.user.update({
+      where: { id: user.id },
+      data: {
+        passwordHash,
+        resetPasswordToken: null,
+        resetPasswordExpires: null,
+      },
     });
   }
 }

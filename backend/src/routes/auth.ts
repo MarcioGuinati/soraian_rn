@@ -23,6 +23,15 @@ const changePasswordSchema = z.object({
   newPassword: z.string().min(6, 'Nova senha deve ter pelo menos 6 caracteres'),
 });
 
+const forgotPasswordSchema = z.object({
+  email: z.string().email('E-mail inválido'),
+});
+
+const resetPasswordSchema = z.object({
+  token: z.string().min(1, 'Token obrigatório'),
+  password: z.string().min(6, 'Senha deve ter pelo menos 6 caracteres'),
+});
+
 router.post('/register', validate(registerSchema), (req, res, next) => {
   authController.register(req, res).catch(next);
 });
@@ -41,6 +50,14 @@ router.put('/profile', authMiddleware, (req, res, next) => {
 
 router.put('/change-password', authMiddleware, validate(changePasswordSchema), (req, res, next) => {
   authController.changePassword(req, res).catch(next);
+});
+
+router.post('/forgot-password', validate(forgotPasswordSchema), (req, res, next) => {
+  authController.forgotPassword(req, res).catch(next);
+});
+
+router.post('/reset-password', validate(resetPasswordSchema), (req, res, next) => {
+  authController.resetPassword(req, res).catch(next);
 });
 
 export default router;

@@ -27,6 +27,21 @@ export class AuthController {
     const user = await authService.updateProfile(req.userId, req.body);
     res.json({ status: 'success', data: user });
   }
+
+  async forgotPassword(req: Request, res: Response) {
+    const { email } = req.body;
+    // Pega a URL do frontend baseada no origin ou um fallback
+    const frontendUrl = req.headers.origin || 'http://localhost:5173';
+    
+    await authService.forgotPassword(email, frontendUrl);
+    res.json({ status: 'success', message: 'Se o e-mail existir, um link de recuperação foi enviado.' });
+  }
+
+  async resetPassword(req: Request, res: Response) {
+    const { token, password } = req.body;
+    await authService.resetPassword(token, password);
+    res.json({ status: 'success', message: 'Senha redefinida com sucesso.' });
+  }
 }
 
 export const authController = new AuthController();

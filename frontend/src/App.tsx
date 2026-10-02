@@ -6,6 +6,8 @@ import Layout from './components/layout/Layout';
 import AdminLayout from './components/layout/AdminLayout';
 import LoginPage from './pages/Login';
 import RegisterPage from './pages/Register';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import DashboardPage from './pages/Dashboard';
 import QuickRegisterPage from './pages/QuickRegister';
 import TimelinePage from './pages/Timeline';
@@ -21,6 +23,7 @@ import SleepTipsPage from './pages/SleepTips';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import AdminUsers from './pages/admin/AdminUsers';
 import AdminUserDetails from './pages/admin/AdminUserDetails';
+import AdminEmailLogs from './pages/admin/AdminEmailLogs';
 
 import LandingPage from './pages/Landing';
 
@@ -58,11 +61,14 @@ function AppRoutes() {
           : <LoginPage />
       } />
       <Route path="/register" element={token ? <Navigate to="/dashboard" /> : <RegisterPage />} />
+      <Route path="/forgot-password" element={token ? <Navigate to="/dashboard" /> : <ForgotPassword />} />
+      <Route path="/reset-password" element={token ? <Navigate to="/dashboard" /> : <ResetPassword />} />
 
       {/* Admin Routes */}
       <Route path="/admin" element={<AdminRoute><AdminLayout><AdminDashboard /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users" element={<AdminRoute><AdminLayout><AdminUsers /></AdminLayout></AdminRoute>} />
       <Route path="/admin/users/:id" element={<AdminRoute><AdminLayout><AdminUserDetails /></AdminLayout></AdminRoute>} />
+      <Route path="/admin/logs" element={<AdminRoute><AdminLayout><AdminEmailLogs /></AdminLayout></AdminRoute>} />
 
       {/* App Routes */}
       <Route path="/dashboard" element={<ProtectedRoute><ChildProvider><Layout><DashboardPage /></Layout></ChildProvider></ProtectedRoute>} />

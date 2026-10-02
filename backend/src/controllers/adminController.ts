@@ -146,6 +146,14 @@ export class AdminController {
 
     res.json({ status: 'success', message: 'Usuário excluído com sucesso' });
   }
+
+  async getEmailLogs(_req: AuthRequest, res: Response) {
+    const logs = await prisma.emailLog.findMany({
+      orderBy: { createdAt: 'desc' },
+      take: 200,
+    });
+    res.json({ status: 'success', data: logs });
+  }
 }
 
 export const adminController = new AdminController();

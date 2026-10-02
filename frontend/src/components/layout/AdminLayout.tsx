@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LayoutDashboard, Users, LogOut, Moon, Sun } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, Moon, Sun, MailWarning } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 
@@ -101,6 +101,20 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             <Users size={18} />
             Usuários
           </NavLink>
+
+          <NavLink 
+            to="/admin/logs" 
+            className={({ isActive }) => 
+              `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
+                isActive 
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
+              }`
+            }
+          >
+            <MailWarning size={18} />
+            Logs de E-mail
+          </NavLink>
         </nav>
 
         <div className="p-4 mt-auto">
@@ -160,6 +174,15 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         >
           <Users size={24} />
           <span className="text-[10px] font-medium">Usuários</span>
+        </NavLink>
+        <NavLink 
+          to="/admin/logs" 
+          className={({ isActive }) => 
+            `flex flex-col items-center gap-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`
+          }
+        >
+          <MailWarning size={24} />
+          <span className="text-[10px] font-medium">Logs</span>
         </NavLink>
       </nav>
 

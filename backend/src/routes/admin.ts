@@ -25,4 +25,8 @@ router.delete('/users/:id', (req, res, next) => {
   adminController.deleteUser(req, res).catch(next);
 });
 
+router.get('/email-logs', (req, res, next) => {
+  adminController.getEmailLogs(req, res).catch(next);
+});
+
 export default router;
