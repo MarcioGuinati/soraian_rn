@@ -138,7 +138,6 @@ export default function TimelinePage() {
                 if (date) setSelectedDate(format(date, 'yyyy-MM-dd'));
               }}
               locale={ptBR}
-              initialFocus
               className="rounded-2xl"
             />
           </PopoverContent>
