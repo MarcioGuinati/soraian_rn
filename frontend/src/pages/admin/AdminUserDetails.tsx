@@ -4,6 +4,10 @@ import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import toast from 'react-hot-toast';
 import api from '../../services/api';
+import { ArrowLeft, User, Mail, Phone, Calendar, RefreshCw, Trash2, Baby, Activity, Moon, FileText, Syringe, Stethoscope } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface ChildCount {
   feedingRecords: number;
@@ -91,8 +95,8 @@ export default function AdminUserDetails() {
 
   if (loading) {
     return (
-      <div className="admin-loading">
-        <div className="admin-spinner" />
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#7C3AED]"></div>
       </div>
     );
   }
@@ -107,144 +111,177 @@ export default function AdminUserDetails() {
   }, 0);
 
   return (
-    <div>
-      <button className="admin-detail-back" onClick={() => navigate('/admin/users')}>
-        ← Voltar para Usuários
-      </button>
+    <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20">
+      <Button 
+        variant="ghost" 
+        className="text-[#A7A8C2] hover:text-white px-0 hover:bg-transparent"
+        onClick={() => navigate('/admin/users')}
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" />
+        Voltar para Usuários
+      </Button>
 
-      <div className="admin-detail-header">
-        <div className="admin-detail-avatar">
+      {/* Profile Header */}
+      <div className="bg-[#151630] border border-white/5 rounded-2xl p-6 md:p-8 flex flex-col md:flex-row items-center md:items-start gap-6 md:gap-8">
+        <div className="w-24 h-24 rounded-full bg-[#7C3AED]/20 text-[#8B5CF6] flex items-center justify-center font-bold text-4xl border-2 border-[#7C3AED]/30 shadow-lg shadow-[#7C3AED]/10 shrink-0">
           {user.name.charAt(0).toUpperCase()}
         </div>
-        <div className="admin-detail-info">
-          <h2>{user.name}</h2>
-          <p>📧 {user.email}</p>
-          {user.phone && <p>📱 {user.phone}</p>}
-          <div className="admin-detail-badges">
-            <span className={`admin-detail-badge role-${user.role}`}>
+        
+        <div className="flex-1 text-center md:text-left space-y-4">
+          <div>
+            <h1 className="text-3xl font-bold text-white mb-2">{user.name}</h1>
+            <div className="flex flex-col md:flex-row items-center gap-2 md:gap-4 text-[#A7A8C2]">
+              <div className="flex items-center gap-2"><Mail size={16} /> {user.email}</div>
+              {user.phone && <div className="flex items-center gap-2"><Phone size={16} /> {user.phone}</div>}
+            </div>
+          </div>
+          
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-2">
+            <Badge variant="outline" className={`px-3 py-1 bg-[#151630] ${user.role === 'admin' ? 'text-amber-400 border-amber-400/50' : 'text-emerald-400 border-emerald-400/50'}`}>
               {user.role === 'admin' ? '👑 Administrador' : '👤 Usuário'}
-            </span>
-            <span className="admin-detail-badge role-user">
-              👶 {user.children.length} {user.children.length === 1 ? 'filho' : 'filhos'}
-            </span>
-            <span className="admin-detail-badge role-user">
-              📋 {totalRecords} registros
-            </span>
+            </Badge>
+            <Badge variant="secondary" className="px-3 py-1 bg-white/5 text-[#A7A8C2] hover:bg-white/10">
+              <Baby size={14} className="mr-1.5" /> {user.children.length} {user.children.length === 1 ? 'filho' : 'filhos'}
+            </Badge>
+            <Badge variant="secondary" className="px-3 py-1 bg-white/5 text-[#A7A8C2] hover:bg-white/10">
+              <Activity size={14} className="mr-1.5" /> {totalRecords} registros
+            </Badge>
           </div>
+        </div>
+
+        <div className="flex flex-col gap-2 shrink-0 w-full md:w-auto">
+          <Button variant="destructive" className="w-full md:w-auto font-bold bg-red-500/20 text-red-500 hover:bg-red-500 hover:text-white" onClick={() => setShowDeleteModal(true)}>
+            <Trash2 className="w-4 h-4 mr-2" /> Excluir Conta
+          </Button>
         </div>
       </div>
 
-      <div className="admin-stats-grid" style={{ gridTemplateColumns: 'repeat(2, 1fr)', marginBottom: 'var(--space-6)' }}>
-        <div className="admin-stat-card info">
-          <div className="admin-stat-icon">📅</div>
-          <div className="admin-stat-value" style={{ fontSize: 'var(--font-size-lg)' }}>
-            {format(new Date(user.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-          </div>
-          <div className="admin-stat-label">Data de Cadastro</div>
-        </div>
-        <div className="admin-stat-card success">
-          <div className="admin-stat-icon">🔄</div>
-          <div className="admin-stat-value" style={{ fontSize: 'var(--font-size-lg)' }}>
-            {format(new Date(user.updatedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
-          </div>
-          <div className="admin-stat-label">Última Atualização</div>
-        </div>
+      {/* Dates Grid */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Card className="bg-[#151630] border-white/5 shadow-none">
+          <CardHeader className="flex flex-row items-center gap-3 pb-2">
+            <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-400 flex items-center justify-center"><Calendar size={18} /></div>
+            <CardTitle className="text-sm font-medium text-[#A7A8C2]">Data de Cadastro</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold text-white">
+              {format(new Date(user.createdAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-[#151630] border-white/5 shadow-none">
+          <CardHeader className="flex flex-row items-center gap-3 pb-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-500/20 text-blue-400 flex items-center justify-center"><RefreshCw size={18} /></div>
+            <CardTitle className="text-sm font-medium text-[#A7A8C2]">Última Atualização</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="text-lg font-bold text-white">
+              {format(new Date(user.updatedAt), "dd/MM/yyyy 'às' HH:mm", { locale: ptBR })}
+            </div>
+          </CardContent>
+        </Card>
       </div>
 
-      {user.children.length > 0 && (
-        <>
-          <h2 className="admin-section-title">👶 Crianças Cadastradas</h2>
-          <div className="admin-children-grid">
-            {user.children.map((child) => {
-              const c = child._count;
-              return (
-                <div key={child.id} className="admin-child-card">
-                  <div className="admin-child-header">
-                    <div className={`admin-child-avatar ${child.gender === 'masculino' ? 'male' : 'female'}`}>
-                      {child.gender === 'masculino' ? '👦' : '👧'}
-                    </div>
-                    <div>
-                      <div className="admin-child-name">{child.name}</div>
-                      <div className="admin-child-birth">
-                        {format(new Date(child.birthDate), "dd/MM/yyyy", { locale: ptBR })} · {calcAge(child.birthDate)}
-                      </div>
-                    </div>
+      {/* Children Section */}
+      <h2 className="text-xl font-bold text-white mt-8 mb-4 flex items-center gap-2">
+        <Baby size={24} className="text-[#8B5CF6]" /> Filhos Cadastrados
+      </h2>
+
+      {user.children.length === 0 ? (
+        <div className="bg-[#151630] border border-white/5 rounded-2xl p-12 flex flex-col items-center justify-center text-center">
+          <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center mb-4">
+            <Baby size={32} className="text-[#A7A8C2]" />
+          </div>
+          <h3 className="text-lg font-bold text-white">Nenhuma criança cadastrada</h3>
+          <p className="text-[#A7A8C2] mt-2">Este usuário ainda não adicionou filhos ao perfil.</p>
+        </div>
+      ) : (
+        <div className="grid gap-6">
+          {user.children.map((child) => {
+            const c = child._count;
+            return (
+              <div key={child.id} className="bg-[#151630] border border-white/5 rounded-2xl overflow-hidden">
+                <div className="p-4 md:p-6 flex items-center gap-4 border-b border-white/5 bg-white/5">
+                  <div className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl shadow-inner ${child.gender === 'masculino' ? 'bg-blue-500/20 text-blue-400' : 'bg-pink-500/20 text-pink-400'}`}>
+                    {child.gender === 'masculino' ? '👦' : '👧'}
                   </div>
-                  <div className="admin-child-stats">
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.feedingRecords}</span>
-                      <span className="admin-child-stat-lbl">Mamadas</span>
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{child.name}</h3>
+                    <p className="text-sm text-[#A7A8C2]">
+                      Nasc: {format(new Date(child.birthDate), "dd/MM/yyyy", { locale: ptBR })} • <span className="font-medium text-white">{calcAge(child.birthDate)}</span>
+                    </p>
+                  </div>
+                </div>
+                
+                <div className="p-4 md:p-6">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3">
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.feedingRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Mamadas</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.diaperRecords}</span>
-                      <span className="admin-child-stat-lbl">Fraldas</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.diaperRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Fraldas</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.sleepRecords}</span>
-                      <span className="admin-child-stat-lbl">Sonos</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.sleepRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Sonos</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.bathRecords}</span>
-                      <span className="admin-child-stat-lbl">Banhos</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.bathRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Banhos</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.vaccines}</span>
-                      <span className="admin-child-stat-lbl">Vacinas</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.vaccines}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Vacinas</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.appointments}</span>
-                      <span className="admin-child-stat-lbl">Consultas</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.appointments}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Consultas</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.medicationRecords}</span>
-                      <span className="admin-child-stat-lbl">Remédios</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.medicationRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Remédios</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.foodRecords}</span>
-                      <span className="admin-child-stat-lbl">Refeições</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.foodRecords}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Refeições</span>
                     </div>
-                    <div className="admin-child-stat">
-                      <span className="admin-child-stat-val">{c.notes_}</span>
-                      <span className="admin-child-stat-lbl">Notas</span>
+                    <div className="bg-[#0F1024] rounded-xl p-3 flex flex-col items-center justify-center border border-white/5 text-center">
+                      <span className="text-lg font-bold text-white">{c.notes_}</span>
+                      <span className="text-[10px] text-[#A7A8C2] uppercase font-bold mt-1">Notas</span>
                     </div>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </>
-      )}
-
-      {user.children.length === 0 && (
-        <div className="empty-state">
-          <div className="empty-state-icon">👶</div>
-          <div className="empty-state-title">Nenhuma criança cadastrada</div>
-          <div className="empty-state-text">Este usuário ainda não cadastrou nenhum filho.</div>
+              </div>
+            );
+          })}
         </div>
       )}
 
-      <div style={{ marginTop: 'var(--space-8)', paddingTop: 'var(--space-6)', borderTop: '1px solid var(--color-border-light)' }}>
-        <button className="admin-delete-btn" onClick={() => setShowDeleteModal(true)}>
-          🗑️ Excluir Usuário
-        </button>
-      </div>
-
+      {/* Delete Modal Overlay */}
       {showDeleteModal && (
-        <div className="modal-overlay" onClick={() => setShowDeleteModal(false)}>
-          <div className="modal-card" onClick={(e) => e.stopPropagation()}>
-            <div className="modal-title">⚠️ Excluir Usuário</div>
-            <div className="modal-text">
-              Tem certeza que deseja excluir <strong>{user.name}</strong>? 
-              Todos os dados (crianças, registros, etc.) serão permanentemente removidos. 
-              Esta ação não pode ser desfeita.
-            </div>
-            <div className="modal-actions">
-              <button className="btn btn-secondary" onClick={() => setShowDeleteModal(false)}>
-                Cancelar
-              </button>
-              <button className="btn btn-danger" onClick={handleDelete}>
-                Excluir
-              </button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4 animate-in fade-in duration-200">
+          <div className="bg-[#151630] border border-white/10 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in zoom-in-95 duration-200">
+            <div className="p-6">
+              <h3 className="text-xl font-bold text-white mb-2 flex items-center gap-2">
+                <Trash2 className="text-red-500" /> Excluir Usuário
+              </h3>
+              <p className="text-[#A7A8C2] mb-6">
+                Tem certeza que deseja excluir a conta de <strong className="text-white">{user.name}</strong>? 
+                Todos os dados (crianças, registros, fotos) serão <strong className="text-red-400">permanentemente removidos</strong>. 
+                Esta ação não pode ser desfeita.
+              </p>
+              
+              <div className="flex gap-3 justify-end">
+                <Button variant="ghost" className="text-white hover:bg-white/10" onClick={() => setShowDeleteModal(false)}>
+                  Cancelar
+                </Button>
+                <Button className="bg-red-500 hover:bg-red-600 text-white font-bold" onClick={handleDelete}>
+                  Sim, Excluir
+                </Button>
+              </div>
             </div>
           </div>
         </div>
