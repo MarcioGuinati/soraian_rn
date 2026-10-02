@@ -12,6 +12,8 @@ const envSchema = z.object({
   JWT_EXPIRES_IN: z.string().default('7d'),
   UPLOAD_DIR: z.string().default('./uploads'),
   MAX_FILE_SIZE: z.string().default('5242880'),
+  SMTP_USER: z.string().optional(),
+  SMTP_PASS: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

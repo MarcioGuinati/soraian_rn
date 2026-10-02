@@ -1,12 +1,14 @@
 import nodemailer from 'nodemailer';
 import path from 'path';
 
-// Configuração do transporter (usando variáveis de ambiente ou os dados fornecidos na request)
+import { env } from '../config/env';
+
+// Configuração do transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'nunarotinabebe@gmail.com', // Será movido para .env no futuro
-    pass: 'sjgaeufydyjqwsuo', // Senha de App
+    user: env.SMTP_USER || 'nunarotinabebe@gmail.com',
+    pass: env.SMTP_PASS || 'sjgaeufydyjqwsuo',
   },
 });
 
@@ -100,8 +102,7 @@ export const sendPasswordResetEmail = async (to: string, resetToken: string, fro
       <div class="container">
         <div class="card">
           <div class="logo-container">
-            <!-- Referenciando a logo como anexo CID (inline) -->
-            <img src="cid:nunalogo" alt="NUNA Logo" class="logo" />
+            <img src="${frontendUrl}/logo.png" alt="NUNA Logo" class="logo" />
           </div>
           <h1>Recuperação de Senha</h1>
           <p>Você solicitou a recuperação de senha para sua conta <strong class="highlight">NUNA</strong>. Clique no botão abaixo para criar uma nova senha.</p>
@@ -122,21 +123,11 @@ export const sendPasswordResetEmail = async (to: string, resetToken: string, fro
     </html>
   `;
 
-  // Caminho absoluto para a imagem da logo que fica no frontend
-  const logoPath = path.join(__dirname, '../../../frontend/public/logo.png');
-
   const mailOptions = {
     from: '"NUNA" <nunarotinabebe@gmail.com>',
     to,
     subject: 'Redefinição de Senha - NUNA',
     html: htmlContent,
-    attachments: [
-      {
-        filename: 'logo.png',
-        path: logoPath,
-        cid: 'nunalogo' // mesmo cid usado no HTML (src="cid:nunalogo")
-      }
-    ]
   };
 
   try {
