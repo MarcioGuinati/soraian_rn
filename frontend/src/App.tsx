@@ -44,14 +44,17 @@ function AdminRoute({ children }: { children: React.ReactNode }) {
 
 function AppRoutes() {
   const { token, user } = useAuth();
+  
+  // Verifica se o usuário está acessando pelo subdomínio 'app'
+  const isAppSubdomain = window.location.hostname === 'app.soraiababy.com.br' || window.location.hostname.startsWith('app.');
 
   return (
     <Routes>
-      {/* Public Landing Page */}
+      {/* Public Landing Page ou Redirect para Login se no App */}
       <Route path="/" element={
         token
           ? (user?.role === 'admin' ? <Navigate to="/admin" /> : <Navigate to="/dashboard" />)
-          : <LandingPage />
+          : (isAppSubdomain ? <Navigate to="/login" /> : <LandingPage />)
       } />
       
       {/* Auth */}
