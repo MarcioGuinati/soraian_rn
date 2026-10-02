@@ -1,6 +1,7 @@
+import { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
-import { LayoutDashboard, Users, LogOut, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, Users, LogOut, Moon, Sun } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { Button } from '@/components/ui/button';
 
@@ -11,6 +12,24 @@ interface AdminLayoutProps {
 export default function AdminLayout({ children }: AdminLayoutProps) {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    setIsDark(document.documentElement.classList.contains('dark'));
+  }, []);
+
+  const toggleTheme = () => {
+    const newTheme = isDark ? 'light' : 'dark';
+    setIsDark(!isDark);
+    localStorage.setItem('Nuna-theme', newTheme);
+    if (newTheme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.setAttribute('data-theme', 'light');
+      document.documentElement.classList.remove('dark');
+    }
+  };
 
   const handleLogout = () => {
     logout();
@@ -18,40 +37,41 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0F1024] text-white flex flex-col md:flex-row font-sans selection:bg-[#7C3AED]/30">
+    <div className="min-h-screen bg-background text-foreground flex flex-col md:flex-row font-sans selection:bg-primary/30">
       
       {/* Mobile Header */}
-      <header className="md:hidden flex items-center justify-between p-4 bg-[#151630] border-b border-white/5 sticky top-0 z-50">
+      <header className="md:hidden flex items-center justify-between p-4 bg-card border-b border-border sticky top-0 z-50">
         <div className="flex items-center gap-2">
           <img src="/logo.png" alt="Nuna" className="w-8 h-8 rounded-lg shadow-sm" />
           <div className="flex items-center gap-1">
-            <span className="font-extrabold text-xl tracking-tight text-white">NUNA</span>
-            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-[#7C3AED]/20 text-[#8B5CF6] uppercase tracking-wider">Admin</span>
+            <span className="font-extrabold text-xl tracking-tight text-foreground">NUNA</span>
+            <span className="px-1.5 py-0.5 rounded text-[10px] font-bold bg-primary/20 text-primary uppercase tracking-wider">Admin</span>
           </div>
         </div>
-        <Button variant="ghost" size="icon" className="text-[#A7A8C2] hover:text-white" onClick={handleLogout}>
-          <LogOut size={20} />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={toggleTheme}>
+            {isDark ? <Sun size={20} /> : <Moon size={20} />}
+          </Button>
+          <Button variant="ghost" size="icon" className="text-muted-foreground hover:text-foreground" onClick={handleLogout}>
+            <LogOut size={20} />
+          </Button>
+        </div>
       </header>
 
       {/* Desktop Sidebar */}
-      <aside className="hidden md:flex flex-col w-64 bg-[#151630] border-r border-white/5 h-screen sticky top-0">
+      <aside className="hidden md:flex flex-col w-64 bg-card border-r border-border h-screen sticky top-0">
         <div className="p-6 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#7C3AED] to-[#D946EF] p-0.5 shadow-lg shadow-[#7C3AED]/20">
-            <div className="w-full h-full bg-[#151630] rounded-[10px] flex items-center justify-center">
-              <ShieldAlert size={20} className="text-[#8B5CF6]" />
-            </div>
-          </div>
+          <img src="/logo.png" alt="Nuna Admin" className="w-10 h-10 rounded-xl shadow-lg shadow-primary/20 object-contain" />
           <div>
-            <h1 className="font-extrabold tracking-tight text-xl text-white">NUNA</h1>
-            <p className="text-[10px] text-[#A7A8C2] font-bold uppercase tracking-widest">Painel Admin</p>
+            <h1 className="font-extrabold tracking-tight text-xl text-foreground">NUNA</h1>
+            <p className="text-[10px] text-muted-foreground font-bold uppercase tracking-widest">Painel Admin</p>
           </div>
         </div>
 
-        <Separator className="bg-white/5" />
+        <Separator className="bg-border" />
 
         <nav className="flex-1 p-4 space-y-1">
-          <div className="text-xs font-bold text-[#A7A8C2] mb-3 px-3 uppercase tracking-wider">Principal</div>
+          <div className="text-xs font-bold text-muted-foreground mb-3 px-3 uppercase tracking-wider">Principal</div>
           
           <NavLink 
             to="/admin" 
@@ -59,8 +79,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className={({ isActive }) => 
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive 
-                  ? 'bg-[#7C3AED] text-white shadow-md shadow-[#7C3AED]/20' 
-                  : 'text-[#A7A8C2] hover:bg-white/5 hover:text-white'
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`
             }
           >
@@ -73,8 +93,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
             className={({ isActive }) => 
               `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors ${
                 isActive 
-                  ? 'bg-[#7C3AED] text-white shadow-md shadow-[#7C3AED]/20' 
-                  : 'text-[#A7A8C2] hover:bg-white/5 hover:text-white'
+                  ? 'bg-primary text-primary-foreground shadow-md shadow-primary/20' 
+                  : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
               }`
             }
           >
@@ -84,19 +104,28 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         </nav>
 
         <div className="p-4 mt-auto">
-          <div className="bg-[#0F1024] border border-white/5 rounded-xl p-3 flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 rounded-full bg-[#7C3AED]/20 text-[#8B5CF6] flex items-center justify-center font-bold text-sm">
+          <Button 
+            variant="ghost" 
+            className="w-full mb-4 justify-start text-muted-foreground hover:text-foreground hover:bg-accent" 
+            onClick={toggleTheme}
+          >
+            {isDark ? <Sun size={18} className="mr-2" /> : <Moon size={18} className="mr-2" />}
+            {isDark ? 'Modo Claro' : 'Modo Escuro'}
+          </Button>
+
+          <div className="bg-background border border-border rounded-xl p-3 flex items-center gap-3 mb-4">
+            <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-sm">
               {user?.name?.charAt(0).toUpperCase()}
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-white truncate">{user?.name}</p>
-              <p className="text-xs text-[#A7A8C2]">Administrador</p>
+              <p className="text-sm font-bold text-foreground truncate">{user?.name}</p>
+              <p className="text-xs text-muted-foreground">Administrador</p>
             </div>
           </div>
           
           <Button 
             variant="ghost" 
-            className="w-full justify-start text-[#A7A8C2] hover:text-white hover:bg-white/5" 
+            className="w-full justify-start text-muted-foreground hover:text-foreground hover:bg-accent" 
             onClick={handleLogout}
           >
             <LogOut size={18} className="mr-2" /> Sair do Painel
@@ -105,19 +134,19 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 min-h-screen p-4 md:p-8 lg:p-12 overflow-y-auto pb-24 md:pb-12 bg-[#0F1024]">
+      <main className="flex-1 min-h-screen p-4 md:p-8 lg:p-12 overflow-y-auto pb-24 md:pb-12 bg-background">
         <div className="max-w-6xl mx-auto">
           {children}
         </div>
       </main>
 
       {/* Mobile Bottom Nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-[#151630] border-t border-white/5 flex items-center justify-around p-3 z-50 safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 w-full bg-card border-t border-border flex items-center justify-around p-3 z-50 safe-area-bottom">
         <NavLink 
           to="/admin" 
           end 
           className={({ isActive }) => 
-            `flex flex-col items-center gap-1 ${isActive ? 'text-[#8B5CF6]' : 'text-[#A7A8C2]'}`
+            `flex flex-col items-center gap-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`
           }
         >
           <LayoutDashboard size={24} />
@@ -126,7 +155,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
         <NavLink 
           to="/admin/users" 
           className={({ isActive }) => 
-            `flex flex-col items-center gap-1 ${isActive ? 'text-[#8B5CF6]' : 'text-[#A7A8C2]'}`
+            `flex flex-col items-center gap-1 ${isActive ? 'text-primary' : 'text-muted-foreground'}`
           }
         >
           <Users size={24} />
