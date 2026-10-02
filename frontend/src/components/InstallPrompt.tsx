@@ -11,7 +11,7 @@ export default function InstallPrompt() {
     const isStandalone = window.matchMedia('(display-mode: standalone)').matches || (window.navigator as any).standalone === true;
     
     // Check if dismissed recently
-    const dismissed = localStorage.getItem('soraia-install-dismissed');
+    const dismissed = localStorage.getItem('Nuna-install-dismissed');
     if (dismissed && Date.now() - parseInt(dismissed) < 7 * 24 * 60 * 60 * 1000) {
       return; // Dismissed within 7 days
     }
@@ -54,7 +54,7 @@ export default function InstallPrompt() {
 
   const handleDismiss = () => {
     setShowPrompt(false);
-    localStorage.setItem('soraia-install-dismissed', Date.now().toString());
+    localStorage.setItem('Nuna-install-dismissed', Date.now().toString());
   };
 
   if (!showPrompt) return null;
@@ -65,7 +65,7 @@ export default function InstallPrompt() {
         <button className="install-prompt-close" onClick={handleDismiss}>✕</button>
         <div className="install-prompt-icon">📱</div>
         <div className="install-prompt-content">
-          <h4>Instale o SORAIA</h4>
+          <h4>Instale o Nuna</h4>
           {isIOS ? (
             <p>
               Para uma melhor experiência, instale o aplicativo. Toque em <img src="https://developer.apple.com/design/human-interface-guidelines/images/icons/Share_2x.png" alt="Share" style={{ width: 14, verticalAlign: 'middle', filter: 'invert(0.5)' }} /> e depois <strong>"Adicionar à Tela de Início"</strong>.
@@ -83,3 +83,4 @@ export default function InstallPrompt() {
     </div>
   );
 }
+

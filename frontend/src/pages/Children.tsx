@@ -2,9 +2,17 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChild } from '../contexts/ChildContext';
 import api from '../services/api';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { formatDate, getChildAge } from '../utils/helpers';
-import './Children.css';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Textarea } from '@/components/ui/textarea';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Baby, Edit2, Trash2, Share2, Plus, ChevronLeft } from 'lucide-react';
 
 export default function ChildrenPage() {
   const { children, selectChild, refreshChildren } = useChild();
@@ -12,7 +20,6 @@ export default function ChildrenPage() {
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState<string | null>(null);
 
-  // Form
   const [name, setName] = useState('');
   const [birthDate, setBirthDate] = useState('');
   const [gender, setGender] = useState('');
@@ -58,112 +65,234 @@ export default function ChildrenPage() {
 
       if (editId) {
         await api.put(`/children/${editId}`, data);
-        toast.success('Criança atualizada!');
+        toast.success('Perfil atualizado com sucesso!');
       } else {
         await api.post('/children', data);
-        toast.success('Criança cadastrada! 🎉');
+        toast.success('Bebê cadastrado com sucesso! 🎉');
       }
 
       await refreshChildren();
       setShowForm(false);
       resetForm();
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao salvar');
+      toast.error('Erro ao salvar os dados.');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm('Deseja realmente remover esta criança e todos os seus registros?')) return;
+  const [shareChildId, setShareChildId] = useState<string | null>(null);
+  const [shareEmail, setShareEmail] = useState('');
+  const [deleteChildId, setDeleteChildId] = useState<string | null>(null);
+
+  const confirmDelete = async () => {
+    if (!deleteChildId) return;
     try {
-      await api.delete(`/children/${id}`);
-      toast.success('Criança removida');
+      await api.delete(`/children/${deleteChildId}`);
+      toast.success('Perfil removido');
       await refreshChildren();
+      setDeleteChildId(null);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao remover');
+      toast.error('Erro ao remover o perfil');
     }
   };
 
-  const handleShare = async (id: string) => {
-    const email = window.prompt("Digite o e-mail da pessoa que você deseja convidar (ela já deve ter conta no app):");
-    if (!email) return;
+  const confirmShare = async () => {
+    if (!shareChildId || !shareEmail) return;
     try {
-      await api.post(`/children/${id}/share`, { email });
-      toast.success('Acesso compartilhado com sucesso!');
+      await api.post(`/children/${shareChildId}/share`, { email: shareEmail });
+      toast.success('Convite enviado com sucesso! 🤝');
       await refreshChildren();
+      setShareChildId(null);
+      setShareEmail('');
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao compartilhar');
+      toast.error(err.response?.data?.message || 'Erro ao compartilhar o acesso');
     }
   };
 
   if (showForm) {
     return (
-      <div className="page"><div className="container">
-        <div className="ch-form-header">
-          <button className="btn btn-ghost" onClick={() => { setShowForm(false); resetForm(); }}>← Voltar</button>
-          <h1>{editId ? 'Editar criança' : 'Nova criança'}</h1>
+      <div className="min-h-screen bg-background p-4 animate-in slide-in-from-right-4 duration-300 pb-24">
+        <div className="flex items-center mb-6">
+          <Button variant="ghost" size="icon" onClick={() => { setShowForm(false); resetForm(); }} className="rounded-full mr-2 bg-muted/50">
+            <ChevronLeft size={22} />
+          </Button>
+          <h1 className="text-2xl font-extrabold tracking-tight">{editId ? 'Editar Perfil' : 'Novo Bebê'}</h1>
         </div>
-        <div className="qr-form">
-          <div className="form-group"><label className="form-label">Nome</label><input type="text" className="form-input" placeholder="Nome da criança" value={name} onChange={e => setName(e.target.value)} required /></div>
-          <div className="form-row">
-            <div className="form-group"><label className="form-label">Data de nascimento</label><input type="date" className="form-input" value={birthDate} onChange={e => setBirthDate(e.target.value)} required /></div>
-            <div className="form-group"><label className="form-label">Sexo</label>
-              <select className="form-input" value={gender} onChange={e => setGender(e.target.value)} required>
-                <option value="">Selecione</option><option value="feminino">Feminino</option><option value="masculino">Masculino</option>
-              </select>
+
+        <Card className="border-0 shadow-xl shadow-primary/5 rounded-[24px]">
+          <CardContent className="p-5 space-y-5">
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Nome do Bebê</Label>
+              <Input placeholder="Nome" value={name} onChange={e => setName(e.target.value)} required className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
             </div>
-          </div>
-          <div className="form-row">
-            <div className="form-group"><label className="form-label">Peso ao nascer (kg)</label><input type="number" step="0.001" className="form-input" placeholder="3.250" value={birthWeight} onChange={e => setBirthWeight(e.target.value)} /></div>
-            <div className="form-group"><label className="form-label">Altura ao nascer (cm)</label><input type="number" step="0.1" className="form-input" placeholder="49" value={birthHeight} onChange={e => setBirthHeight(e.target.value)} /></div>
-          </div>
-          <div className="form-row">
-            <div className="form-group"><label className="form-label">Tipo sanguíneo</label><input type="text" className="form-input" placeholder="O+" value={bloodType} onChange={e => setBloodType(e.target.value)} /></div>
-            <div className="form-group"><label className="form-label">Responsáveis</label><input type="text" className="form-input" placeholder="Nomes" value={parentNames} onChange={e => setParentNames(e.target.value)} /></div>
-          </div>
-          <div className="form-group"><label className="form-label">Observações</label><textarea className="form-input" value={notes} onChange={e => setNotes(e.target.value)} rows={3} /></div>
-          <button className="btn btn-primary btn-lg btn-block" onClick={handleSave} disabled={saving}>{saving ? 'Salvando...' : '✓ Salvar'}</button>
-        </div>
-      </div></div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Nascimento</Label>
+                <Input type="date" value={birthDate} onChange={e => setBirthDate(e.target.value)} required className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Sexo</Label>
+                <Select value={gender} onValueChange={setGender}>
+                  <SelectTrigger className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background text-base">
+                    <SelectValue placeholder="Selecione" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="feminino">Feminina</SelectItem>
+                    <SelectItem value="masculino">Masculino</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Peso (kg)</Label>
+                <Input type="number" step="0.001" placeholder="3.250" value={birthWeight} onChange={e => setBirthWeight(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Altura (cm)</Label>
+                <Input type="number" step="0.1" placeholder="49" value={birthHeight} onChange={e => setBirthHeight(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Tipo Sanguíneo</Label>
+              <Input placeholder="Ex: O+" value={bloodType} onChange={e => setBloodType(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Responsáveis</Label>
+              <Input placeholder="Nomes dos pais" value={parentNames} onChange={e => setParentNames(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Observações de Saúde</Label>
+              <Textarea placeholder="Alergias, condições, etc..." value={notes} onChange={e => setNotes(e.target.value)} className="rounded-xl min-h-[100px] bg-muted/50 border-transparent focus:bg-background text-base" />
+            </div>
+
+            <Button size="lg" className="w-full h-14 rounded-full text-base font-bold shadow-lg shadow-primary/20 mt-4" onClick={handleSave} disabled={saving}>
+              {saving ? 'Salvando...' : 'Salvar Perfil'}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
   return (
-    <div className="page"><div className="container">
-      <h1 className="ch-title">Crianças</h1>
+    <div className="flex flex-col min-h-screen bg-background px-6 py-6 animate-in fade-in duration-500 pb-24">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center">
+          <Button variant="ghost" size="icon" onClick={() => navigate('/more')} className="rounded-full mr-2 -ml-2">
+            <ChevronLeft size={24} />
+          </Button>
+          <h1 className="text-2xl font-extrabold tracking-tight">Meus Bebês</h1>
+        </div>
+      </div>
+
       {children.length === 0 ? (
-        <div className="empty-state">
-          <div className="empty-state-icon">👶</div>
-          <h2 className="empty-state-title">Nenhuma criança cadastrada</h2>
-          <p className="empty-state-text">Adicione sua primeira criança</p>
+        <div className="flex flex-col items-center justify-center p-8 mt-12 text-center">
+          <div className="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+            <Baby size={40} className="text-primary" />
+          </div>
+          <h2 className="text-xl font-bold mb-2">Nenhuma criança</h2>
+          <p className="text-muted-foreground mb-8">Adicione seu bebê para começar a acompanhar a rotina.</p>
         </div>
       ) : (
-        <div className="ch-list">
+        <div className="space-y-4">
           {children.map(child => (
-            <div key={child.id} className="ch-card" onClick={() => { selectChild(child); navigate('/dashboard'); }}>
-              <div className="ch-card-avatar">{child.name.charAt(0)}</div>
-              <div className="ch-card-info">
-                <div className="ch-card-name">{child.name}</div>
-                <div className="ch-card-age">{getChildAge(child.birthDate)} • {formatDate(child.birthDate)}</div>
-                {child.sharedAccess && child.sharedAccess.length > 0 && (
-                  <div style={{ fontSize: 12, color: 'var(--color-primary-light)', marginTop: 4 }}>
-                    🤝 Compartilhado com: {child.sharedAccess.map((a: any) => a.user?.name?.split(' ')[0] || a.user?.email).join(', ')}
+            <Card key={child.id} className="border-0 shadow-md shadow-black/5 bg-card rounded-3xl overflow-hidden active:scale-[0.98] transition-transform cursor-pointer" onClick={() => { selectChild(child); navigate('/dashboard'); }}>
+              <CardContent className="p-5 flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                  <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-[#D946EF] text-white flex items-center justify-center text-3xl font-black shadow-inner">
+                    {child.name.charAt(0).toUpperCase()}
                   </div>
-                )}
-              </div>
-              <div className="ch-card-actions" onClick={e => e.stopPropagation()}>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleShare(child.id)} title="Compartilhar Acesso">🤝</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleEdit(child)} title="Editar">✏️</button>
-                <button className="btn btn-ghost btn-sm" onClick={() => handleDelete(child.id)} title="Remover">🗑️</button>
-              </div>
-            </div>
+                  <div className="flex-1">
+                    <h3 className="text-xl font-bold leading-tight">{child.name}</h3>
+                    <p className="text-sm font-medium text-muted-foreground">{getChildAge(child.birthDate)} • {formatDate(child.birthDate)}</p>
+                    
+                    {child.sharedAccess && child.sharedAccess.length > 0 && (
+                      <p className="text-[11px] font-bold text-primary mt-1.5 flex items-center gap-1 bg-primary/10 w-fit px-2 py-0.5 rounded-full">
+                        <Share2 size={10} /> Compartilhado: {child.sharedAccess.length} pessoa(s)
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <div className="flex justify-between items-center pt-2 border-t border-border/40" onClick={e => e.stopPropagation()}>
+                  <Button variant="ghost" size="sm" className="font-bold text-primary hover:bg-primary/10 rounded-full h-9 px-4" onClick={() => setShareChildId(child.id)}>
+                    <Share2 size={16} className="mr-1.5" /> Convidar
+                  </Button>
+                  <div className="flex gap-1">
+                    <Button variant="ghost" size="icon" className="text-muted-foreground rounded-full h-9 w-9" onClick={() => handleEdit(child)}>
+                      <Edit2 size={16} />
+                    </Button>
+                    <Button variant="ghost" size="icon" className="text-destructive/80 hover:text-destructive hover:bg-destructive/10 rounded-full h-9 w-9" onClick={() => setDeleteChildId(child.id)}>
+                      <Trash2 size={16} />
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           ))}
         </div>
       )}
-      <button className="btn btn-primary btn-lg btn-block" style={{ marginTop: 24 }} onClick={() => { resetForm(); setShowForm(true); }}>
-        + Adicionar criança
-      </button>
-    </div></div>
+
+      <Button size="lg" className="w-full h-14 rounded-full text-base font-bold shadow-lg shadow-primary/20 mt-8" onClick={() => { resetForm(); setShowForm(true); }}>
+        <Plus className="mr-2" size={20} /> Cadastrar Novo Bebê
+      </Button>
+
+      {/* Share Dialog */}
+      <Dialog open={!!shareChildId} onOpenChange={(open) => { if(!open) { setShareChildId(null); setShareEmail(''); } }}>
+        <DialogContent className="rounded-[24px] max-w-[340px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Convidar parceiro(a)</DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Compartilhe o perfil do bebê com outra pessoa (precisa ter conta no Nuna).
+            </DialogDescription>
+          </DialogHeader>
+          <div className="py-2">
+            <Label className="font-bold text-muted-foreground mb-2 block">E-mail do usuário</Label>
+            <Input 
+              type="email" 
+              placeholder="contato@exemplo.com" 
+              value={shareEmail} 
+              onChange={e => setShareEmail(e.target.value)} 
+              className="h-12 rounded-xl bg-muted/50 border-transparent focus:bg-background"
+            />
+          </div>
+          <DialogFooter className="flex-row gap-2 sm:justify-end mt-2">
+            <Button variant="ghost" className="flex-1 rounded-full font-bold h-12" onClick={() => { setShareChildId(null); setShareEmail(''); }}>
+              Cancelar
+            </Button>
+            <Button className="flex-1 rounded-full font-bold h-12 shadow-sm" onClick={confirmShare} disabled={!shareEmail}>
+              Convidar
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Dialog */}
+      <Dialog open={!!deleteChildId} onOpenChange={(open) => !open && setDeleteChildId(null)}>
+        <DialogContent className="rounded-[24px] max-w-[340px]">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">Remover Bebê</DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Tem certeza que deseja excluir esta criança e todos os registros associados? Essa ação não pode ser desfeita.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter className="flex-row gap-2 sm:justify-end mt-2">
+            <Button variant="ghost" className="flex-1 rounded-full font-bold h-12" onClick={() => setDeleteChildId(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" className="flex-1 rounded-full font-bold h-12" onClick={confirmDelete}>
+              Sim, excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </div>
   );
 }

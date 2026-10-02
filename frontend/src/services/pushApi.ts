@@ -48,3 +48,4 @@ export const subscribeToPushNotifications = async () => {
   
   return subscription;
 };
+

@@ -10,7 +10,7 @@ const api = axios.create({
 });
 
 api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('soraia_token');
+  const token = localStorage.getItem('Nuna_token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -21,8 +21,8 @@ api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('soraia_token');
-      localStorage.removeItem('soraia_user');
+      localStorage.removeItem('Nuna_token');
+      localStorage.removeItem('Nuna_user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -30,3 +30,4 @@ api.interceptors.response.use(
 );
 
 export default api;
+

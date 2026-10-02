@@ -20,8 +20,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('soraia_token');
-    const storedUser = localStorage.getItem('soraia_user');
+    const storedToken = localStorage.getItem('Nuna_token');
+    const storedUser = localStorage.getItem('Nuna_user');
 
     if (storedToken && storedUser) {
       setToken(storedToken);
@@ -35,8 +35,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user: userData, token: tokenData } = res.data.data;
     setUser(userData);
     setToken(tokenData);
-    localStorage.setItem('soraia_token', tokenData);
-    localStorage.setItem('soraia_user', JSON.stringify(userData));
+    localStorage.setItem('Nuna_token', tokenData);
+    localStorage.setItem('Nuna_user', JSON.stringify(userData));
   };
 
   const register = async (data: { name: string; email: string; password: string; phone?: string }) => {
@@ -44,22 +44,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const { user: userData, token: tokenData } = res.data.data;
     setUser(userData);
     setToken(tokenData);
-    localStorage.setItem('soraia_token', tokenData);
-    localStorage.setItem('soraia_user', JSON.stringify(userData));
+    localStorage.setItem('Nuna_token', tokenData);
+    localStorage.setItem('Nuna_user', JSON.stringify(userData));
   };
 
   const logout = () => {
     setUser(null);
     setToken(null);
-    localStorage.removeItem('soraia_token');
-    localStorage.removeItem('soraia_user');
+    localStorage.removeItem('Nuna_token');
+    localStorage.removeItem('Nuna_user');
   };
 
   const updateUser = (data: Partial<User>) => {
     if (user) {
       const updated = { ...user, ...data };
       setUser(updated);
-      localStorage.setItem('soraia_user', JSON.stringify(updated));
+      localStorage.setItem('Nuna_user', JSON.stringify(updated));
     }
   };
 
@@ -75,3 +75,4 @@ export function useAuth() {
   if (!ctx) throw new Error('useAuth must be used within AuthProvider');
   return ctx;
 }
+

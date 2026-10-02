@@ -14,7 +14,7 @@ self.addEventListener('push', (event) => {
     console.error('Error parsing push data', e);
   }
 
-  const title = data.title || 'Soraia';
+  const title = data.title || 'Nuna';
   const options = {
     body: data.body || 'Você tem uma nova notificação',
     icon: '/icon-192.png',
@@ -48,3 +48,4 @@ self.addEventListener('notificationclick', (event) => {
     );
   }
 });
+

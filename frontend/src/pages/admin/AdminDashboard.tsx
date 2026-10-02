@@ -63,7 +63,7 @@ export default function AdminDashboard() {
     <div>
       <div className="admin-page-header">
         <h1 className="admin-page-title">Dashboard</h1>
-        <p className="admin-page-subtitle">Visão geral da plataforma SORAIA</p>
+        <p className="admin-page-subtitle">Visão geral da plataforma Nuna</p>
       </div>
 
       <div className="admin-stats-grid">
@@ -122,3 +122,4 @@ export default function AdminDashboard() {
     </div>
   );
 }
+

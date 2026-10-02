@@ -2,21 +2,26 @@ import { useState } from 'react';
 import { useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { useChild } from '../contexts/ChildContext';
 import api from '../services/api';
-import toast from 'react-hot-toast';
 import { nowISO, utcToLocalString, localToUTC } from '../utils/helpers';
-import './QuickRegister.css';
+import { toast } from 'sonner';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
+import { Baby, Moon, Droplets, Ruler, Bath, Pill, Apple, PenLine, ChevronLeft, Calendar } from 'lucide-react';
 
 const RECORD_TYPES = [
-  { key: 'feeding', emoji: '🍼', label: 'Mamou' },
-  { key: 'food', emoji: '🍎', label: 'Alimentação' },
-  { key: 'diaper-pee', emoji: '💧', label: 'Xixi' },
-  { key: 'diaper-poop', emoji: '💩', label: 'Cocô' },
-  { key: 'sleep', emoji: '😴', label: 'Sono' },
-  { key: 'bath', emoji: '🛁', label: 'Banho' },
-  { key: 'temperature', emoji: '🌡️', label: 'Temperatura' },
-  { key: 'weight', emoji: '⚖️', label: 'Peso' },
-  { key: 'medication', emoji: '💊', label: 'Medicamento' },
-  { key: 'note', emoji: '📝', label: 'Observação' },
+  { key: 'feeding', icon: <Baby size={32} />, label: 'Mamada', bg: 'bg-[#F9C2D9]/20 text-[#D946EF]' },
+  { key: 'sleep', icon: <Moon size={32} />, label: 'Sono', bg: 'bg-[#DCCBFF]/30 text-[#8B5CF6]' },
+  { key: 'diaper-pee', icon: <Droplets size={32} />, label: 'Xixi', bg: 'bg-[#BEEFE5]/50 text-[#0D9488]' },
+  { key: 'diaper-poop', icon: <Droplets size={32} />, label: 'Cocô', bg: 'bg-[#FFE4E6] text-[#E11D48]' },
+  { key: 'food', icon: <Apple size={32} />, label: 'Alimentação', bg: 'bg-[#D1FAE5] text-[#059669]' },
+  { key: 'bath', icon: <Bath size={32} />, label: 'Banho', bg: 'bg-[#BDEBF3]/50 text-[#0284C7]' },
+  { key: 'weight', icon: <Ruler size={32} />, label: 'Medidas', bg: 'bg-[#FFE3A3]/50 text-[#D97706]' },
+  { key: 'medication', icon: <Pill size={32} />, label: 'Medicamento', bg: 'bg-[#FFD0D0]/50 text-[#DC2626]' },
+  { key: 'note', icon: <PenLine size={32} />, label: 'Anotação', bg: 'bg-muted text-muted-foreground' },
 ];
 
 export default function QuickRegisterPage() {
@@ -30,13 +35,15 @@ export default function QuickRegisterPage() {
   const editEvent = location.state?.event;
   const isEdit = !!editEvent;
 
-  // Form states
+  // Shared
+  const [recordedAt, setRecordedAt] = useState(editEvent?.eventDate ? utcToLocalString(editEvent.eventDate) : nowISO());
+  const [notes, setNotes] = useState(editEvent?.notes || '');
+
+  // Feeding
   const [feedingType, setFeedingType] = useState(editEvent?.type || 'peito');
   const [amountMl, setAmountMl] = useState(editEvent?.amountMl?.toString() || '');
   const [breastSide, setBreastSide] = useState(editEvent?.breastSide || '');
   const [durationMinutes, setDurationMinutes] = useState(editEvent?.durationMinutes?.toString() || '');
-  const [recordedAt, setRecordedAt] = useState(editEvent?.eventDate ? utcToLocalString(editEvent.eventDate) : nowISO());
-  const [notes, setNotes] = useState(editEvent?.notes || '');
 
   // Food
   const [mealType, setMealType] = useState(editEvent?.mealType || 'almoco');
@@ -57,41 +64,30 @@ export default function QuickRegisterPage() {
   const [waterTemp, setWaterTemp] = useState(editEvent?.waterTemperature?.toString() || '');
   const [bathDuration, setBathDuration] = useState(editEvent?.durationMinutes?.toString() || '');
 
-  // Temperature
-  const [temperature, setTemperature] = useState(editEvent?.temperature?.toString() || '');
-  const [measurementMethod, setMeasurementMethod] = useState(editEvent?.measurementMethod || 'axilar');
-
   // Weight
   const [weight, setWeight] = useState(editEvent?.weight?.toString() || '');
   const [height, setHeight] = useState(editEvent?.height?.toString() || '');
-  const [headCircumference, setHeadCircumference] = useState(editEvent?.headCircumference?.toString() || '');
 
   // Medication
   const [medName, setMedName] = useState(editEvent?.medicationName || '');
   const [dosage, setDosage] = useState(editEvent?.dosage || '');
-  const [medUnit, setMedUnit] = useState(editEvent?.unit || '');
-  const [reason, setReason] = useState(editEvent?.reason || '');
 
   // Note
-  const [category, setCategory] = useState(editEvent?.category || '');
   const [content, setContent] = useState(editEvent?.content || '');
 
   if (!selectedChild) {
     return (
-      <div className="page"><div className="container">
-        <div className="empty-state">
-          <div className="empty-state-icon">👶</div>
-          <h2 className="empty-state-title">Nenhuma criança selecionada</h2>
-          <p className="empty-state-text">Cadastre uma criança primeiro para poder registrar eventos.</p>
-        </div>
-      </div></div>
+      <div className="flex flex-col items-center justify-center p-6 h-full text-center">
+        <Baby size={48} className="text-muted-foreground mb-4" />
+        <h2 className="text-xl font-bold mb-2">Nenhuma criança selecionada</h2>
+        <p className="text-muted-foreground">Cadastre uma criança primeiro.</p>
+      </div>
     );
   }
 
   const handleSave = async () => {
     if (saving) return;
     setSaving(true);
-
     try {
       const childId = selectedChild.id;
       let endpoint = '';
@@ -122,354 +118,264 @@ export default function QuickRegisterPage() {
           endpoint = `/children/${childId}/baths`;
           body = { startedAt: localToUTC(recordedAt), durationMinutes: bathDuration ? parseInt(bathDuration) : undefined, waterTemperature: waterTemp ? parseFloat(waterTemp) : undefined, notes: notes || undefined };
           break;
-        case 'temperature':
-          endpoint = `/children/${childId}/temperatures`;
-          body = { temperature: parseFloat(temperature), measurementMethod, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
-          break;
         case 'weight':
           endpoint = `/children/${childId}/weights`;
-          body = { weight: parseFloat(weight), height: height ? parseFloat(height) : undefined, headCircumference: headCircumference ? parseFloat(headCircumference) : undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
+          body = { weight: parseFloat(weight), height: height ? parseFloat(height) : undefined, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'medication':
           endpoint = `/children/${childId}/medications`;
-          body = { medicationName: medName, dosage, unit: medUnit || undefined, recordedAt: localToUTC(recordedAt), reason: reason || undefined, notes: notes || undefined };
+          body = { medicationName: medName, dosage, recordedAt: localToUTC(recordedAt), notes: notes || undefined };
           break;
         case 'note':
           endpoint = `/children/${childId}/notes`;
-          body = { category: category || undefined, content, recordedAt: localToUTC(recordedAt) };
+          body = { content, recordedAt: localToUTC(recordedAt) };
           break;
       }
 
       if (isEdit) {
         endpoint = endpoint.replace(`/children/${childId}`, '');
         await api.put(`${endpoint}/${editEvent.id}`, body);
-        toast.success('Registro atualizado! ✅');
+        toast.success('Atualizado com sucesso!');
       } else {
         await api.post(endpoint, body);
-        toast.success('Registro salvo! ✅');
+        toast.success('Salvo com sucesso!');
       }
       navigate(-1);
     } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao salvar registro');
+      toast.error('Erro ao salvar registro');
     } finally {
       setSaving(false);
     }
   };
 
-  const handleStartSleep = async () => {
-    setSaving(true);
-    try {
-      await api.post(`/children/${selectedChild.id}/sleep/start`, { location: sleepLocation || undefined });
-      toast.success('Sono iniciado! 💤');
-      navigate('/');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Erro ao iniciar sono');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  const handleStopSleep = async () => {
-    setSaving(true);
-    try {
-      await api.post(`/children/${selectedChild.id}/sleep/stop`);
-      toast.success('Sono finalizado! ☀️');
-      navigate('/');
-    } catch (err: any) {
-      toast.error(err.response?.data?.message || 'Nenhum sono ativo');
-    } finally {
-      setSaving(false);
-    }
-  };
-
-  if (!selectedType) {
-    return (
-      <div className="page">
-        <div className="container">
-          <h1 className="qr-title">Registrar</h1>
-          <p className="qr-subtitle">O que aconteceu com {selectedChild.name}?</p>
-          <div className="qr-grid">
-            {RECORD_TYPES.map((rt) => (
-              <button key={rt.key} className="qr-type-btn" onClick={() => { setSelectedType(rt.key); setRecordedAt(nowISO()); setSleepStartedAt(nowISO()); }}>
-                <span className="qr-type-emoji">{rt.emoji}</span>
-                <span className="qr-type-label">{rt.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const OptionSelector = ({ options, value, onChange }: { options: {value: string, label: string}[], value: string, onChange: (v: string) => void }) => (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+      {options.map(o => (
+        <Button 
+          key={o.value} 
+          type="button" 
+          variant={value === o.value ? "default" : "outline"} 
+          className={`h-12 rounded-xl font-bold ${value === o.value ? 'shadow-md ring-2 ring-primary/20' : 'text-muted-foreground'}`}
+          onClick={() => onChange(o.value)}
+        >
+          {o.label}
+        </Button>
+      ))}
+    </div>
+  );
 
   const renderForm = () => {
     switch (selectedType) {
       case 'feeding':
         return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Tipo</label>
-              <div className="qr-options">
-                {['peito', 'formula', 'leite_ordenhado', 'outro'].map(t => (
-                  <button key={t} className={`qr-option ${feedingType === t ? 'active' : ''}`} onClick={() => setFeedingType(t)}>
-                    {t === 'peito' ? 'Peito' : t === 'formula' ? 'Fórmula' : t === 'leite_ordenhado' ? 'Ordenhado' : 'Outro'}
-                  </button>
-                ))}
-              </div>
+          <div className="space-y-5">
+            <div>
+              <Label className="mb-2 block font-bold text-muted-foreground">O que o bebê mamou?</Label>
+              <OptionSelector 
+                value={feedingType} onChange={setFeedingType}
+                options={[{value: 'peito', label: 'Peito'}, {value: 'formula', label: 'Fórmula'}, {value: 'leite_ordenhado', label: 'Ordenhado'}]} 
+              />
             </div>
             {feedingType === 'peito' && (
-              <div className="form-group">
-                <label className="form-label">Seio</label>
-                <div className="qr-options">
-                  {['esquerdo', 'direito', 'ambos'].map(s => (
-                    <button key={s} className={`qr-option ${breastSide === s ? 'active' : ''}`} onClick={() => setBreastSide(s)}>
-                      {s.charAt(0).toUpperCase() + s.slice(1)}
-                    </button>
-                  ))}
-                </div>
+              <div>
+                <Label className="mb-2 block font-bold text-muted-foreground">Qual lado?</Label>
+                <OptionSelector 
+                  value={breastSide} onChange={setBreastSide}
+                  options={[{value: 'esquerdo', label: 'Esquerdo'}, {value: 'direito', label: 'Direito'}, {value: 'ambos', label: 'Ambos'}]} 
+                />
               </div>
             )}
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Quantidade (ml)</label>
-                <input type="number" className="form-input" placeholder="120" value={amountMl} onChange={e => setAmountMl(e.target.value)} />
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Volume (ml)</Label>
+                <Input type="number" placeholder="120" value={amountMl} onChange={e => setAmountMl(e.target.value)} className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
               </div>
-              <div className="form-group">
-                <label className="form-label">Duração (min)</label>
-                <input type="number" className="form-input" placeholder="15" value={durationMinutes} onChange={e => setDurationMinutes(e.target.value)} />
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Tempo (min)</Label>
+                <Input type="number" placeholder="15" value={durationMinutes} onChange={e => setDurationMinutes(e.target.value)} className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
               </div>
             </div>
-          </>
+          </div>
         );
-
-      case 'food':
-        return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Refeição</label>
-              <div className="qr-options">
-                {[['cafe', 'Café'], ['almoco', 'Almoço'], ['lanche', 'Lanche'], ['jantar', 'Jantar'], ['outro', 'Outro']].map(([k, l]) => (
-                  <button key={k} className={`qr-option ${mealType === k ? 'active' : ''}`} onClick={() => setMealType(k)}>
-                    {l}
-                  </button>
-                ))}
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Alimento</label>
-              <input type="text" className="form-input" placeholder="Papinha de banana..." value={food} onChange={e => setFood(e.target.value)} required />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Quantidade</label>
-                <input type="number" className="form-input" placeholder="100" value={foodAmount} onChange={e => setFoodAmount(e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Unidade</label>
-                <input type="text" className="form-input" placeholder="g, ml, colher" value={foodUnit} onChange={e => setFoodUnit(e.target.value)} />
-              </div>
-            </div>
-          </>
-        );
-
-      case 'diaper-pee':
-        return <p className="qr-quick-msg">Registro rápido de xixi 💧</p>;
 
       case 'diaper-poop':
         return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Consistência</label>
-              <div className="qr-options">
-                {['líquido', 'mole', 'pastoso', 'firme'].map(c => (
-                  <button key={c} className={`qr-option ${consistency === c ? 'active' : ''}`} onClick={() => setConsistency(c)}>
-                    {c.charAt(0).toUpperCase() + c.slice(1)}
-                  </button>
-                ))}
-              </div>
+          <div className="space-y-5">
+            <div>
+              <Label className="mb-2 block font-bold text-muted-foreground">Qual a consistência?</Label>
+              <OptionSelector 
+                value={consistency} onChange={setConsistency}
+                options={[{value: 'liquido', label: 'Líquido'}, {value: 'mole', label: 'Mole'}, {value: 'pastoso', label: 'Pastoso'}, {value: 'firme', label: 'Firme'}]} 
+              />
             </div>
-            <div className="form-group">
-              <label className="form-label">Cor</label>
-              <div className="qr-options">
-                {['amarelo', 'mostarda', 'verde', 'marrom', 'outro'].map(c => (
-                  <button key={c} className={`qr-option ${color === c ? 'active' : ''}`} onClick={() => setColor(c)}>
-                    {c.charAt(0).toUpperCase() + c.slice(1)}
-                  </button>
-                ))}
-              </div>
+            <div>
+              <Label className="mb-2 block font-bold text-muted-foreground">Qual a cor?</Label>
+              <OptionSelector 
+                value={color} onChange={setColor}
+                options={[{value: 'amarelo', label: 'Amarelo'}, {value: 'mostarda', label: 'Mostarda'}, {value: 'verde', label: 'Verde'}, {value: 'marrom', label: 'Marrom'}]} 
+              />
             </div>
-          </>
+          </div>
         );
 
       case 'sleep':
         return (
-          <>
+          <div className="space-y-5">
             {!isEdit && (
-              <div className="qr-sleep-actions">
-                <button className="btn btn-primary btn-lg btn-block" onClick={handleStartSleep} disabled={saving} style={{marginBottom: 12}}>
-                  😴 Iniciar sono
-                </button>
-                <button className="btn btn-secondary btn-lg btn-block" onClick={handleStopSleep} disabled={saving} style={{marginBottom: 24}}>
-                  ☀️ Finalizar sono
-                </button>
+              <div className="grid grid-cols-2 gap-3 pb-4">
+                <Button variant="secondary" className="h-14 rounded-2xl font-bold bg-[#DCCBFF] text-[#6D28D9] hover:bg-[#DCCBFF]/80" onClick={async () => {
+                  setSaving(true);
+                  try {
+                    await api.post(`/children/${selectedChild.id}/sleep/start`);
+                    toast.success('Soneca iniciada! 💤');
+                    navigate('/');
+                  } catch(e) { toast.error('Erro'); setSaving(false); }
+                }}>
+                  Dormiu Agora
+                </Button>
+                <Button variant="secondary" className="h-14 rounded-2xl font-bold bg-[#FFE3A3] text-[#D97706] hover:bg-[#FFE3A3]/80" onClick={async () => {
+                  setSaving(true);
+                  try {
+                    await api.post(`/children/${selectedChild.id}/sleep/stop`);
+                    toast.success('Acordou! ☀️');
+                    navigate('/');
+                  } catch(e) { toast.error('Sem sono ativo'); setSaving(false); }
+                }}>
+                  Acordou
+                </Button>
               </div>
             )}
-            {!isEdit && <p className="qr-divider-text">ou registrar manualmente:</p>}
-            <div className="form-group">
-              <label className="form-label">Dormiu às</label>
-              <input type="datetime-local" className="form-input" value={sleepStartedAt} onChange={e => setSleepStartedAt(e.target.value)} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Acordou às</label>
-              <input type="datetime-local" className="form-input" value={sleepEndedAt} onChange={e => setSleepEndedAt(e.target.value)} />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Local</label>
-              <div className="qr-options">
-                {['berço', 'colo', 'cama', 'carrinho', 'outro'].map(l => (
-                  <button key={l} className={`qr-option ${sleepLocation === l ? 'active' : ''}`} onClick={() => setSleepLocation(l)}>
-                    {l.charAt(0).toUpperCase() + l.slice(1)}
-                  </button>
-                ))}
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Dormiu às</Label>
+                <Input type="datetime-local" value={sleepStartedAt} onChange={e => setSleepStartedAt(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">Acordou às</Label>
+                <Input type="datetime-local" value={sleepEndedAt} onChange={e => setSleepEndedAt(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
               </div>
             </div>
-          </>
-        );
-
-      case 'bath':
-        return (
-          <div className="form-row">
-            <div className="form-group">
-              <label className="form-label">Duração (min)</label>
-              <input type="number" className="form-input" placeholder="15" value={bathDuration} onChange={e => setBathDuration(e.target.value)} />
+            <div>
+              <Label className="mb-2 block font-bold text-muted-foreground">Local</Label>
+              <OptionSelector 
+                value={sleepLocation} onChange={setSleepLocation}
+                options={[{value: 'berco', label: 'Berço'}, {value: 'colo', label: 'Colo'}, {value: 'cama', label: 'Cama'}, {value: 'carrinho', label: 'Carrinho'}]} 
+              />
             </div>
-            <div className="form-group">
-              <label className="form-label">Temp. água (°C)</label>
-              <input type="number" step="0.1" className="form-input" placeholder="37" value={waterTemp} onChange={e => setWaterTemp(e.target.value)} />
+          </div>
+        );
+        
+      case 'weight':
+        return (
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Peso (kg)</Label>
+              <Input type="number" step="0.01" placeholder="4.5" value={weight} onChange={e => setWeight(e.target.value)} className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
+            </div>
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">Altura (cm)</Label>
+              <Input type="number" step="0.1" placeholder="55" value={height} onChange={e => setHeight(e.target.value)} className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
             </div>
           </div>
         );
 
-      case 'temperature':
-        return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Temperatura (°C)</label>
-              <input type="number" step="0.1" className="form-input" placeholder="36.5" value={temperature} onChange={e => setTemperature(e.target.value)} required />
-            </div>
-            <div className="form-group">
-              <label className="form-label">Método</label>
-              <div className="qr-options">
-                {['axilar', 'oral', 'retal', 'infravermelho'].map(m => (
-                  <button key={m} className={`qr-option ${measurementMethod === m ? 'active' : ''}`} onClick={() => setMeasurementMethod(m)}>
-                    {m.charAt(0).toUpperCase() + m.slice(1)}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        );
-
-      case 'weight':
-        return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Peso (kg)</label>
-              <input type="number" step="0.01" className="form-input" placeholder="4.5" value={weight} onChange={e => setWeight(e.target.value)} required />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Altura (cm)</label>
-                <input type="number" step="0.1" className="form-input" placeholder="55" value={height} onChange={e => setHeight(e.target.value)} />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Per. cefálico (cm)</label>
-                <input type="number" step="0.1" className="form-input" placeholder="35" value={headCircumference} onChange={e => setHeadCircumference(e.target.value)} />
-              </div>
-            </div>
-          </>
-        );
-
       case 'medication':
-        return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Medicamento</label>
-              <input type="text" className="form-input" placeholder="Vitamina D" value={medName} onChange={e => setMedName(e.target.value)} required />
-            </div>
-            <div className="form-row">
-              <div className="form-group">
-                <label className="form-label">Dose</label>
-                <input type="text" className="form-input" placeholder="2" value={dosage} onChange={e => setDosage(e.target.value)} required />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Unidade</label>
-                <input type="text" className="form-input" placeholder="gotas, ml" value={medUnit} onChange={e => setMedUnit(e.target.value)} />
-              </div>
-            </div>
-            <div className="form-group">
-              <label className="form-label">Motivo</label>
-              <input type="text" className="form-input" placeholder="Suplementação..." value={reason} onChange={e => setReason(e.target.value)} />
-            </div>
-          </>
-        );
-
+      case 'food':
+      case 'bath':
       case 'note':
+        // Simplified generic form for remaining
         return (
-          <>
-            <div className="form-group">
-              <label className="form-label">Categoria</label>
-              <input type="text" className="form-input" placeholder="Geral, Marco, Saúde..." value={category} onChange={e => setCategory(e.target.value)} />
+          <div className="space-y-5">
+            {(selectedType === 'medication' || selectedType === 'food') && (
+              <div className="space-y-1.5">
+                <Label className="font-bold text-muted-foreground">{selectedType === 'medication' ? 'Qual remédio?' : 'O que comeu?'}</Label>
+                <Input type="text" value={selectedType === 'medication' ? medName : food} onChange={e => selectedType === 'medication' ? setMedName(e.target.value) : setFood(e.target.value)} className="h-14 rounded-xl text-lg bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+            )}
+            <div className="space-y-1.5">
+              <Label className="font-bold text-muted-foreground">{selectedType === 'note' ? 'Anotação' : 'Observações (opcional)'}</Label>
+              <Textarea placeholder="..." value={selectedType === 'note' ? content : notes} onChange={e => selectedType === 'note' ? setContent(e.target.value) : setNotes(e.target.value)} className="rounded-xl min-h-[100px] text-lg bg-muted/50 border-transparent focus:bg-background" />
             </div>
-            <div className="form-group">
-              <label className="form-label">Observação</label>
-              <textarea className="form-input" placeholder="Escreva sua anotação..." value={content} onChange={e => setContent(e.target.value)} required rows={4} />
-            </div>
-          </>
+          </div>
         );
 
-      default:
-        return null;
+      default: return null;
     }
   };
+
+  if (!selectedType) {
+    return (
+      <div className="flex flex-col min-h-screen bg-background p-4 animate-in fade-in duration-500">
+        <div className="flex items-center mb-6">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full mr-2">
+            <ChevronLeft size={24} />
+          </Button>
+          <div>
+            <h1 className="text-2xl font-extrabold text-foreground leading-tight tracking-tight">O que aconteceu?</h1>
+            <p className="text-muted-foreground text-sm font-medium">Selecione o que deseja registrar</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-4">
+          {RECORD_TYPES.map((rt) => (
+            <Card key={rt.key} onClick={() => { setSelectedType(rt.key); setRecordedAt(nowISO()); }} className="border-0 shadow-sm active:scale-95 transition-all cursor-pointer rounded-[24px] bg-card hover:shadow-md">
+              <CardContent className="p-5 flex flex-col items-center justify-center text-center gap-3">
+                <div className={`w-16 h-16 rounded-full flex items-center justify-center ${rt.bg}`}>
+                  {rt.icon}
+                </div>
+                <span className="font-bold text-foreground">{rt.label}</span>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const typeInfo = RECORD_TYPES.find(t => t.key === selectedType);
 
   return (
-    <div className="page">
-      <div className="container">
-        <div className="qr-form-header animate-fade-in">
-          <button className="btn btn-ghost" onClick={() => navigate(-1)}>← Voltar</button>
-          <h1 className="qr-form-title">{isEdit ? 'Editar' : 'Registrar'} {typeInfo?.emoji}</h1>
-        </div>
-
-        <div className="qr-form animate-fade-in">
-          {renderForm()}
-
-          {/* Shared: date/time and notes */}
-          {selectedType !== 'sleep' && (
-            <div className="form-group">
-              <label className="form-label">Data/Hora</label>
-              <input type="datetime-local" className="form-input" value={recordedAt} onChange={e => setRecordedAt(e.target.value)} />
+    <div className="flex flex-col min-h-screen bg-background animate-in slide-in-from-right-4 duration-300">
+      <div className="sticky top-0 z-10 bg-background/90 backdrop-blur-md border-b border-border/40 p-4 pb-4">
+        <div className="flex items-center">
+          <Button variant="ghost" size="icon" onClick={() => navigate(-1)} className="rounded-full mr-3 bg-muted/50">
+            <ChevronLeft size={22} />
+          </Button>
+          <div className="flex items-center gap-3">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center ${typeInfo?.bg}`}>
+              {typeInfo?.icon && <div className="scale-75">{typeInfo.icon}</div>}
             </div>
-          )}
-
-          <div className="form-group">
-            <label className="form-label">Observações</label>
-            <textarea className="form-input" placeholder="Alguma observação..." value={notes} onChange={e => setNotes(e.target.value)} rows={2} />
+            <div>
+              <h1 className="text-xl font-extrabold text-foreground leading-tight">{isEdit ? 'Editar' : 'Registrar'} {typeInfo?.label}</h1>
+            </div>
           </div>
-
-          {/* Save button (hide for sleep's start/stop actions) */}
-          {selectedType !== 'sleep' && (
-            <button className="btn btn-primary btn-lg btn-block" onClick={handleSave} disabled={saving}>
-              {saving ? 'Salvando...' : (isEdit ? '✓ Salvar alterações' : '✓ Salvar registro')}
-            </button>
-          )}
-          {selectedType === 'sleep' && (
-            <button className="btn btn-primary btn-lg btn-block" onClick={handleSave} disabled={saving}>
-              {saving ? 'Salvando...' : (isEdit ? '✓ Salvar alterações' : '✓ Salvar manualmente')}
-            </button>
-          )}
         </div>
+      </div>
+
+      <div className="p-4 space-y-6 pb-32">
+        <Card className="border-0 shadow-xl shadow-primary/5 rounded-[24px]">
+          <CardContent className="p-5 space-y-6">
+            {renderForm()}
+
+            {selectedType !== 'sleep' && selectedType !== 'note' && (
+              <div className="space-y-1.5 pt-2 border-t border-border/50">
+                <Label className="font-bold text-muted-foreground flex items-center gap-1.5"><Calendar size={16}/> Data e Hora</Label>
+                <Input type="datetime-local" value={recordedAt} onChange={e => setRecordedAt(e.target.value)} className="h-14 rounded-xl bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+            )}
+            
+            {selectedType === 'diaper-pee' && (
+              <div className="space-y-1.5 pt-2 border-t border-border/50">
+                <Label className="font-bold text-muted-foreground">Observações (opcional)</Label>
+                <Textarea placeholder="..." value={notes} onChange={e => setNotes(e.target.value)} className="rounded-xl min-h-[100px] text-lg bg-muted/50 border-transparent focus:bg-background" />
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        <Button size="lg" className="w-full h-14 rounded-full text-base font-bold shadow-lg shadow-primary/20" onClick={handleSave} disabled={saving}>
+          {saving ? 'Salvando...' : (isEdit ? 'Salvar Alterações' : 'Salvar Registro')}
+        </Button>
       </div>
     </div>
   );

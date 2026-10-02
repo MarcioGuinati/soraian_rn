@@ -22,7 +22,7 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
           <div className="admin-logo">
             <span className="admin-logo-icon">👑</span>
             <div>
-              <span className="admin-logo-text">SORAIA</span>
+              <span className="admin-logo-text">Nuna</span>
               <span className="admin-logo-badge">Admin</span>
             </div>
           </div>
@@ -61,8 +61,10 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       {/* Mobile Header */}
       <header className="admin-mobile-header">
         <div className="admin-mobile-brand">
-          <span className="admin-logo-icon">👑</span>
-          <span className="admin-logo-text">SORAIA</span>
+          <span className="admin-logo-icon">
+            <img src="/logo.png" alt="Nuna Admin" className="app-logo-image" style={{ width: '28px', height: 'auto' }} />
+          </span>
+          <span className="admin-logo-text">NUNA</span>
           <span className="admin-logo-badge">Admin</span>
         </div>
         <button className="admin-logout-btn" onClick={handleLogout} title="Sair">
@@ -88,3 +90,4 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     </div>
   );
 }
+

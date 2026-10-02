@@ -6,21 +6,18 @@
 
 /* =================== HEADER =================== */
 .header {
-  position: sticky;
-  top: 0;
+  position: relative;
+  background: transparent;
+  border-bottom: none;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-2);
   z-index: var(--z-sticky);
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border-bottom: 1px solid var(--color-border-light);
-  height: var(--header-height);
 }
 
 .header-inner {
   max-width: var(--max-width-lg);
   margin: 0 auto;
   padding: 0 var(--space-4);
-  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -29,27 +26,49 @@
 .header-brand {
   display: flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
 }
 
-.header-logo {
-  font-size: 24px;
+.header-logo-icon {
+  font-size: 48px;
+  line-height: 1;
+}
+
+.header-brand-text {
+  display: flex;
+  flex-direction: column;
 }
 
 .header-title {
-  font-size: var(--font-size-xl);
+  font-size: 28px;
   font-weight: 800;
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: var(--color-primary);
+  line-height: 1;
   letter-spacing: 0.02em;
 }
 
-.header-child-name {
-  font-weight: 600;
+.header-subtitle {
+  font-size: 13px;
   color: var(--color-text-secondary);
-  font-size: var(--font-size-sm);
+  font-weight: 500;
+  margin-top: 4px;
+}
+
+.header-settings {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary-soft);
+  color: var(--color-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.header-settings:active {
+  transform: scale(0.9);
 }
 
 .child-selector-select {
@@ -77,45 +96,52 @@
 /* =================== BOTTOM NAV =================== */
 .bottom-nav {
   position: fixed;
-  bottom: var(--space-4);
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: calc(100% - var(--space-8));
-  max-width: 400px;
+  width: 100%;
+  max-width: var(--max-width);
   height: var(--bottom-nav-height);
-  background: var(--color-bg-glass);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
-  border: 1px solid var(--color-border-light);
-  border-radius: var(--radius-full);
+  background: var(--color-bg-card);
+  border-top: 1px solid var(--color-border-light);
+  border-radius: 32px 32px 0 0;
   display: flex;
   align-items: center;
   justify-content: space-around;
   padding: 0 var(--space-2);
   z-index: var(--z-fixed);
-  box-shadow: var(--shadow-lg);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.06);
 }
 
 .nav-item {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
-  padding: var(--space-2) var(--space-3);
+  justify-content: center;
+  gap: 4px;
   color: var(--color-text-tertiary);
   text-decoration: none;
   font-size: var(--font-size-xs);
   transition: all var(--transition-fast);
-  border-radius: var(--radius-md);
   min-width: 56px;
+  height: 100%;
+  position: relative;
 }
 
 .nav-item.active {
   color: var(--color-primary);
 }
 
-.nav-item.active .nav-icon {
-  transform: scale(1.15);
+.nav-item.active::after {
+  content: '';
+  position: absolute;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 24px;
+  height: 3px;
+  border-radius: var(--radius-full);
+  background: var(--color-primary);
 }
 
 .nav-icon {
@@ -134,17 +160,17 @@
 }
 
 .nav-fab-icon {
-  width: 52px;
-  height: 52px;
+  width: 64px;
+  height: 64px;
   border-radius: var(--radius-full);
-  background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+  background: var(--color-primary-light);
   color: white;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 32px;
   font-weight: 300;
-  box-shadow: 0 4px 16px rgba(124, 140, 248, 0.35);
+  box-shadow: 0 4px 16px rgba(139, 92, 246, 0.35);
   transition: all var(--transition-fast);
 }
 

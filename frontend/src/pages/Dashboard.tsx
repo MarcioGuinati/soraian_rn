@@ -4,8 +4,12 @@ import { useChild } from '../contexts/ChildContext';
 import { useAuth } from '../contexts/AuthContext';
 import api from '../services/api';
 import { DashboardData } from '../types';
-import { getChildAge, formatDuration, formatTimeAgo } from '../utils/helpers';
-import './Dashboard.css';
+import { formatDuration, formatTimeAgo } from '../utils/helpers';
+
+import { Card, CardContent } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Plus, ChevronRight, Calendar, Baby, Moon, Droplets, Ruler, Bath, Pill } from 'lucide-react';
 
 export default function DashboardPage() {
   const { selectedChild, children: childrenList } = useChild();
@@ -26,7 +30,6 @@ export default function DashboardPage() {
     if (!selectedChild) return;
     try {
       setLoading(true);
-      
       const now = new Date();
       const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).toISOString();
       const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).toISOString();
@@ -44,29 +47,29 @@ export default function DashboardPage() {
 
   if (!selectedChild && childrenList.length === 0 && !loading) {
     return (
-      <div className="page">
-        <div className="container">
-          <div className="empty-state">
-            <div className="empty-state-icon">👶</div>
-            <h2 className="empty-state-title">Bem-vindo ao SORAIA!</h2>
-            <p className="empty-state-text">Cadastre sua primeira criança para começar a acompanhar a rotina.</p>
-            <button className="btn btn-primary btn-lg" style={{ marginTop: 24 }} onClick={() => navigate('/children/new')}>
-              + Adicionar criança
-            </button>
-          </div>
+      <div className="flex flex-col items-center justify-center p-6 min-h-[70vh] text-center animate-in fade-in zoom-in duration-500">
+        <div className="w-24 h-24 bg-primary/10 rounded-full flex items-center justify-center mb-6">
+          <Baby size={48} className="text-primary" />
         </div>
+        <h2 className="text-2xl font-bold text-foreground mb-2">Bem-vindo ao NUNA!</h2>
+        <p className="text-muted-foreground mb-8 max-w-[280px]">Cadastre sua primeira criança para começar a acompanhar a rotina.</p>
+        <Button size="lg" className="w-full rounded-full h-14 text-base shadow-lg shadow-primary/25" onClick={() => navigate('/children/new')}>
+          <Plus className="mr-2" /> Adicionar Criança
+        </Button>
       </div>
     );
   }
 
   if (loading || !data) {
     return (
-      <div className="page">
-        <div className="container">
-          <div className="skeleton" style={{ height: 60, marginBottom: 24 }}></div>
-          <div className="skeleton" style={{ height: 160, borderRadius: 24, marginBottom: 32 }}></div>
-          <div className="skeleton" style={{ height: 200, borderRadius: 24 }}></div>
+      <div className="p-4 space-y-6">
+        <div className="space-y-2">
+          <Skeleton className="h-8 w-48" />
+          <Skeleton className="h-4 w-64" />
         </div>
+        <Skeleton className="h-40 w-full rounded-3xl" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
+        <Skeleton className="h-24 w-full rounded-2xl" />
       </div>
     );
   }
@@ -74,135 +77,107 @@ export default function DashboardPage() {
   const { today } = data;
 
   const activities = [
-    { key: 'sleep', title: 'Sono', subtitle: today.sleep.activeSleep ? 'Dormindo agora' : `Hoje: ${formatDuration(today.sleep.totalMinutes)}`, icon: '😴', bg: 'var(--color-sleep-bg)', color: 'var(--color-sleep)', link: '/add?type=sleep' },
-    { key: 'feeding', title: 'Mamadas', subtitle: today.feeding.count > 0 ? `${today.feeding.count} vez(es) hoje` : 'Nenhuma mamada', icon: '🍼', bg: 'var(--color-feeding-bg)', color: 'var(--color-feeding)', link: '/add?type=feeding' },
-    { key: 'diaper', title: 'Fraldas', subtitle: (today.diaper.peeCount || today.diaper.poopCount) ? `${today.diaper.peeCount} xixi, ${today.diaper.poopCount} cocô` : 'Nenhuma troca', icon: '💩', bg: 'var(--color-diaper-poop-bg)', color: 'var(--color-diaper-poop)', link: '/add?type=diaper' },
-    { key: 'bath', title: 'Banho', subtitle: today.bath.count > 0 ? `${today.bath.count} banho(s)` : 'Sem banho', icon: '🛁', bg: 'var(--color-bath-bg)', color: 'var(--color-bath)', link: '/add?type=bath' },
-    { key: 'temperature', title: 'Saúde', subtitle: today.temperature ? `Última: ${today.temperature.temperature.toFixed(1)}°C` : 'Nenhum registro', icon: '🌡️', bg: 'var(--color-temp-bg)', color: 'var(--color-temp)', link: '/add?type=temperature' },
+    { key: 'sleep', title: 'Sono', subtitle: today.sleep.activeSleep ? 'Dormindo agora' : (today.sleep.totalMinutes === 0 ? 'Hoje: 0min' : `Hoje: ${formatDuration(today.sleep.totalMinutes)}`), icon: <Moon className="text-[#8B5CF6]" size={24} />, bg: 'bg-[#DCCBFF]', link: '/add?type=sleep' },
+    { key: 'feeding', title: 'Mamadas', subtitle: today.feeding.count > 0 ? `${today.feeding.count} vez(es)` : 'Nenhuma', icon: <Baby className="text-[#D946EF]" size={24} />, bg: 'bg-[#F9C2D9]', link: '/add?type=feeding' },
+    { key: 'diaper', title: 'Fraldas', subtitle: (today.diaper.peeCount || today.diaper.poopCount) ? `${today.diaper.peeCount} xixi, ${today.diaper.poopCount} cocô` : 'Nenhuma', icon: <Droplets className="text-[#0D9488]" size={24} />, bg: 'bg-[#BEEFE5]', link: '/add?type=diaper' },
+    { key: 'growth', title: 'Peso e Medidas', subtitle: 'Acompanhar', icon: <Ruler className="text-[#D97706]" size={24} />, bg: 'bg-[#FFE3A3]', link: '/add?type=growth' },
   ];
 
   return (
-    <div className="page">
-      <div className="container">
-        
-        {/* Header */}
-        <div className="dash-header animate-fade-in">
-          <div>
-            <h1 className="dash-greeting-text">Olá, {user?.name?.split(' ')[0]} 👋</h1>
-            <p className="dash-greeting-sub">Acompanhe a rotina de {selectedChild?.name}</p>
-          </div>
-          <button className="dash-notification-btn" onClick={() => navigate('/reminders')}>
-            🔔
-            {data.upcomingReminders.length > 0 && <span className="dash-notification-dot"></span>}
-          </button>
+    <div className="flex flex-col gap-6 px-6 pt-8 pb-4 animate-in fade-in duration-500">
+      
+      {/* Greeting Header */}
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-extrabold text-foreground leading-tight tracking-tight">
+            Olá, <br/>
+            <span className="text-primary">{selectedChild?.name || user?.name?.split(' ')[0] || 'Responsável'}</span>
+          </h1>
+          <p className="text-muted-foreground text-sm mt-1 font-medium flex items-center gap-1.5">
+            <span>👋</span> Acompanhe a rotina da sua pequena 💜
+          </p>
         </div>
+        <img src="/logo.png" alt="Baby Illustration" className="w-20 h-20 object-contain drop-shadow-sm opacity-90 app-logo-image" />
+      </div>
 
-        {/* Overview Card */}
-        <div className="dash-overview-card animate-scale-in">
-          <div className="dash-overview-header">
-            <div className="dash-overview-title">
-              👀 Resumo de Hoje
+      {/* Resumo do Dia Card */}
+      <Card className="border-0 shadow-xl shadow-primary/20 bg-gradient-to-br from-[#A855F7] to-[#7C3AED] text-white rounded-[28px] overflow-hidden">
+        <CardContent className="p-5">
+          <div className="flex justify-between items-center mb-6">
+            <div className="flex items-center gap-2 font-bold text-lg">
+              <Calendar size={20} className="opacity-90" />
+              Resumo de Hoje
             </div>
-            <div className="dash-overview-link" onClick={() => navigate('/timeline')}>
-              Ver Mais ❯
-            </div>
+            <button onClick={() => navigate('/timeline')} className="text-xs font-bold uppercase tracking-wider opacity-80 hover:opacity-100 flex items-center transition-opacity">
+              Ver mais <ChevronRight size={14} className="ml-0.5" />
+            </button>
           </div>
           
-          <div className="dash-overview-stats">
-            <div className="dash-stat">
-              <div className="dash-stat-icon">🍼</div>
-              <div className="dash-stat-label">Mamadas</div>
-              <div className="dash-stat-value">{today.feeding.count < 10 ? `0${today.feeding.count}` : today.feeding.count}</div>
+          <div className="flex justify-between items-end px-2">
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                <Baby size={22} className="text-white" />
+              </div>
+              <span className="text-[10px] font-bold tracking-widest uppercase opacity-90">Mamadas</span>
+              <span className="text-2xl font-black">{today.feeding.count < 10 ? `0${today.feeding.count}` : today.feeding.count}</span>
             </div>
             
-            <div className="dash-stat">
-              <div className="dash-stat-icon">😴</div>
-              <div className="dash-stat-label">Sono</div>
-              <div className="dash-stat-value">{formatDuration(today.sleep.totalMinutes)}</div>
+            <div className="w-px h-16 bg-white/20 mb-2" />
+
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                <Moon size={22} className="text-white" />
+              </div>
+              <span className="text-[10px] font-bold tracking-widest uppercase opacity-90">Sono</span>
+              <span className="text-2xl font-black">{today.sleep.totalMinutes === 0 ? '0m' : formatDuration(today.sleep.totalMinutes).replace('h', 'h ').replace('min', 'm')}</span>
             </div>
 
-            <div className="dash-stat">
-              <div className="dash-stat-icon">💩</div>
-              <div className="dash-stat-label">Fraldas</div>
-              <div className="dash-stat-value">
+            <div className="w-px h-16 bg-white/20 mb-2" />
+
+            <div className="flex flex-col items-center gap-2">
+              <div className="w-12 h-12 rounded-full bg-white/20 backdrop-blur-md flex items-center justify-center shadow-inner">
+                <Droplets size={22} className="text-white" />
+              </div>
+              <span className="text-[10px] font-bold tracking-widest uppercase opacity-90">Fraldas</span>
+              <span className="text-2xl font-black">
                 {(today.diaper.peeCount + today.diaper.poopCount) < 10 
                   ? `0${today.diaper.peeCount + today.diaper.poopCount}` 
                   : (today.diaper.peeCount + today.diaper.poopCount)}
-              </div>
+              </span>
             </div>
           </div>
+        </CardContent>
+      </Card>
+
+      {/* Ações Rápidas / Atividades */}
+      <div className="space-y-4">
+        <div className="flex justify-between items-center px-1">
+          <h2 className="text-xl font-extrabold text-foreground tracking-tight">Atividades</h2>
+          <button onClick={() => navigate('/more')} className="text-xs font-bold text-primary uppercase tracking-wider">Ver Todas</button>
         </div>
-
-        <div className="dash-desktop-grid">
-          <div className="dash-desktop-col">
-            {/* Activities */}
-            <div className="dash-section-header animate-fade-in">
-              <h2 className="dash-section-title">Atividades</h2>
-              <div className="dash-section-link" onClick={() => navigate('/more')}>
-                VER TODAS
-              </div>
-            </div>
-
-            <div className="dash-activities animate-fade-in">
-              {activities.map(act => (
-                <div key={act.key} className="dash-activity-item" onClick={() => navigate(act.link)}>
-                  <div className="dash-activity-icon" style={{ background: act.bg }}>
+        
+        <div className="grid grid-cols-2 gap-3">
+          {activities.map(act => (
+            <Card key={act.key} onClick={() => navigate(act.link)} className="border-border/50 shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer rounded-2xl overflow-hidden bg-card">
+              <CardContent className="p-4 flex flex-col gap-3">
+                <div className="flex justify-between items-start">
+                  <div className={`w-10 h-10 rounded-full flex items-center justify-center ${act.bg}`}>
                     {act.icon}
                   </div>
-                  <div className="dash-activity-info">
-                    <div className="dash-activity-title">{act.title}</div>
-                    <div className="dash-activity-subtitle">{act.subtitle}</div>
+                  <div className="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center">
+                    <Plus size={16} strokeWidth={3} />
                   </div>
-                  <button className="dash-activity-btn" onClick={(e) => { e.stopPropagation(); navigate(act.link); }}>
-                    ＋
-                  </button>
                 </div>
-              ))}
-            </div>
-          </div>
-
-          <div className="dash-desktop-col">
-            {/* Activity History */}
-            <div className="dash-section-header animate-fade-in" style={{ marginTop: 'var(--space-6)' }}>
-              <h2 className="dash-section-title">Últimos Eventos</h2>
-              <div className="dash-section-link" onClick={() => navigate('/timeline')}>
-                VER MAIS
-              </div>
-            </div>
-            
-            <div className="dash-history-list animate-fade-in">
-              {today.feeding.last && (
-                <div className="dash-history-item">
-                  <div className="dash-history-title">🍼 Mamada {today.feeding.last.amountMl ? `(${today.feeding.last.amountMl}ml)` : ''}</div>
-                  <div className="dash-history-time">{formatTimeAgo(today.feeding.last.recordedAt)}</div>
+                <div>
+                  <h3 className="font-bold text-foreground text-sm">{act.title}</h3>
+                  <p className="text-xs font-medium text-muted-foreground mt-0.5 line-clamp-1">{act.subtitle}</p>
                 </div>
-              )}
-              {today.diaper.lastPee && (
-                <div className="dash-history-item">
-                  <div className="dash-history-title">💧 Troca de Fralda (Xixi)</div>
-                  <div className="dash-history-time">{formatTimeAgo(today.diaper.lastPee.recordedAt)}</div>
-                </div>
-              )}
-              {today.diaper.lastPoop && (
-                <div className="dash-history-item">
-                  <div className="dash-history-title">💩 Troca de Fralda (Cocô)</div>
-                  <div className="dash-history-time">{formatTimeAgo(today.diaper.lastPoop.recordedAt)}</div>
-                </div>
-              )}
-              {today.sleep.last && (
-                <div className="dash-history-item">
-                  <div className="dash-history-title">😴 Sono</div>
-                  <div className="dash-history-time">{formatTimeAgo(today.sleep.last.startedAt)}</div>
-                </div>
-              )}
-              {(!today.feeding.last && !today.diaper.lastPee && !today.diaper.lastPoop && !today.sleep.last) && (
-                <div className="dash-history-empty">Nenhum evento registrado hoje.</div>
-              )}
-            </div>
-          </div>
+              </CardContent>
+            </Card>
+          ))}
         </div>
-
       </div>
+
     </div>
   );
 }

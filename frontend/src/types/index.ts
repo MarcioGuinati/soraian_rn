@@ -181,3 +181,4 @@ export interface DashboardData {
 }
 
 export type RecordType = 'feeding' | 'food' | 'diaper' | 'sleep' | 'bath' | 'temperature' | 'weight' | 'medication' | 'note';
+

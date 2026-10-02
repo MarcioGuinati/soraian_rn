@@ -1,8 +1,14 @@
+import path from "path"
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
 export default defineConfig({
+  resolve: {
+    alias: {
+      "@": path.resolve(__dirname, "./src"),
+    },
+  },
   plugins: [
     react(),
     VitePWA({
@@ -12,8 +18,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       devOptions: { enabled: false },
       manifest: {
-        name: 'SORAIA - Rotina do Bebê',
-        short_name: 'SORAIA',
+        name: 'Nuna - Rotina do Bebê',
+        short_name: 'Nuna',
         description: 'Acompanhamento da rotina infantil',
         theme_color: '#7403F1',
         background_color: '#F4F6FB',
@@ -48,3 +54,4 @@ export default defineConfig({
     },
   },
 })
+

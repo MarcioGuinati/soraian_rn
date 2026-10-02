@@ -1,12 +1,81 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 240 11% 95%;
+    --foreground: 236 43% 15%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 236 43% 15%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 236 43% 15%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 240 18% 92%;
+    --input: 240 18% 92%;
+    --ring: 262 83% 58%;
+
+    --radius: 1rem;
+  }
+
+  .dark {
+    --background: 236 43% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 236 43% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 236 43% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 262 83% 58%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 262 83% 58%;
+  }
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;500;700;800&display=swap');
 
 :root {
-  /* Primary - Electric Violet (#7403F1) */
-  --color-primary: #7403F1;
-  --color-primary-light: #9B4AF5;
-  --color-primary-lighter: #C28EF9;
-  --color-primary-dark: #4B029E;
-  --color-primary-bg: rgba(116, 3, 241, 0.08);
+  /* Primary - SORAIA Purple */
+  --color-primary: #7C3AED;
+  --color-primary-light: #8B5CF6;
+  --color-primary-dark: #6D28D9;
+  --color-primary-soft: #F3E8FF;
+  --color-primary-bg: rgba(124, 58, 237, 0.08);
+  --gradient-primary: linear-gradient(135deg, #A855F7 0%, #7C3AED 100%);
 
   /* Accent - Indigo */
   --color-accent: #6366F1;
@@ -22,38 +91,38 @@
   --color-danger-bg: rgba(248, 113, 113, 0.1);
 
   /* Category Colors */
-  --color-feeding: #89216B;
-  --color-feeding-bg: rgba(137, 33, 107, 0.12);
-  --color-sleep: #A78BFA;
-  --color-sleep-bg: rgba(167, 139, 250, 0.12);
-  --color-diaper-pee: #60C5E8;
-  --color-diaper-pee-bg: rgba(96, 197, 232, 0.12);
-  --color-diaper-poop: #F5A623;
-  --color-diaper-poop-bg: rgba(245, 166, 35, 0.12);
-  --color-bath: #5EC4D4;
-  --color-bath-bg: rgba(94, 196, 212, 0.12);
-  --color-temp: #DA4453;
-  --color-temp-bg: rgba(218, 68, 83, 0.12);
-  --color-weight: #34D399;
-  --color-weight-bg: rgba(52, 211, 153, 0.12);
-  --color-medicine: #FB923C;
-  --color-medicine-bg: rgba(251, 146, 60, 0.12);
+  --color-feeding: #F9C2D9;
+  --color-feeding-bg: #FCE7F1;
+  --color-sleep: #DCCBFF;
+  --color-sleep-bg: #F0E9FF;
+  --color-diaper-pee: #BEEFE5;
+  --color-diaper-pee-bg: #E7FAF5;
+  --color-diaper-poop: #BEEFE5;
+  --color-diaper-poop-bg: #E7FAF5;
+  --color-bath: #BDEBF3;
+  --color-bath-bg: #E7F9FC;
+  --color-temp: #FFD0D0;
+  --color-temp-bg: #FFF0F0;
+  --color-weight: #FFE3A3;
+  --color-weight-bg: #FFF5D9;
+  --color-medicine: #FFD0D0;
+  --color-medicine-bg: #FFF0F0;
   --color-food: #F472B6;
   --color-food-bg: rgba(244, 114, 182, 0.12);
   --color-note: #94A3B8;
   --color-note-bg: rgba(148, 163, 184, 0.12);
 
   /* Background */
-  --color-bg: #F4F6FB;
+  --color-bg: #F8F9FD;
   --color-bg-card: #FFFFFF;
   --color-bg-input: #F8F9FE;
   --color-bg-overlay: rgba(26, 27, 46, 0.5);
   --color-bg-glass: rgba(255, 255, 255, 0.72);
 
   /* Text */
-  --color-text: #1E1E2E;
-  --color-text-secondary: #6B7280;
-  --color-text-tertiary: #9CA3AF;
+  --color-text: #171A3A;
+  --color-text-secondary: #737694;
+  --color-text-tertiary: #9A9CB0;
   --color-text-inverse: #FFFFFF;
 
   /* Borders */
@@ -89,10 +158,10 @@
   --shadow-md: 0 6px 16px rgba(0, 0, 0, 0.12);
   --shadow-lg: 0 10px 32px rgba(0, 0, 0, 0.16);
   --shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.20);
-  --shadow-glow: 0 0 20px rgba(124, 140, 248, 0.25);
+  --shadow-glow: 0 0 20px rgba(124, 58, 237, 0.25);
 
   /* Typography */
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-family: 'Nunito Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --font-size-xs: 0.75rem;
   --font-size-sm: 0.8125rem;
   --font-size-base: 0.9375rem;
@@ -104,21 +173,30 @@
 
   /* Spacing */
   --space-1: 0.25rem;
+  /* 4px */
   --space-2: 0.5rem;
+  /* 8px */
   --space-3: 0.75rem;
+  /* 12px */
   --space-4: 1rem;
+  /* 16px */
   --space-5: 1.25rem;
+  /* 20px */
   --space-6: 1.5rem;
+  /* 24px */
   --space-8: 2rem;
+  /* 32px */
   --space-10: 2.5rem;
+  /* 40px */
   --space-12: 3rem;
+  /* 48px */
 
   /* Radius */
   --radius-sm: 12px;
   --radius-md: 16px;
   --radius-lg: 24px;
-  --radius-xl: 32px;
-  --radius-2xl: 40px;
+  --radius-xl: 28px;
+  --radius-2xl: 32px;
   --radius-full: 9999px;
 
   /* Transitions */
@@ -142,10 +220,14 @@
   --sidebar-width: 260px;
   --max-width: 480px;
   --max-width-lg: 1200px;
+
+  --padding-horizontal: var(--space-5);
 }
 
 /* =================== RESET =================== */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
@@ -193,7 +275,9 @@ button {
   color: inherit;
 }
 
-input, select, textarea {
+input,
+select,
+textarea {
   font-family: inherit;
   font-size: inherit;
 }
@@ -203,12 +287,13 @@ input, select, textarea {
   width: 100%;
   max-width: var(--max-width);
   margin: 0 auto;
-  padding: 0 var(--space-4);
+  padding: 0 var(--padding-horizontal);
 }
 
 @media (min-width: 768px) {
   .container {
     max-width: 100%;
+    --padding-horizontal: var(--space-6);
   }
 }
 
@@ -337,8 +422,15 @@ input, select, textarea {
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.95); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 .btn-ghost:hover {
@@ -623,43 +715,89 @@ select.form-input {
 
 /* =================== ANIMATIONS =================== */
 @keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-  from { opacity: 1; }
-  to { opacity: 0; }
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes slideUp {
-  from { transform: translateY(100%); }
-  to { transform: translateY(0); }
+  from {
+    transform: translateY(100%);
+  }
+
+  to {
+    transform: translateY(0);
+  }
 }
 
 @keyframes slideDown {
-  from { transform: translateY(0); }
-  to { transform: translateY(100%); }
+  from {
+    transform: translateY(0);
+  }
+
+  to {
+    transform: translateY(100%);
+  }
 }
 
 @keyframes scaleIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
+  from {
+    transform: scale(0.9);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
 
 @keyframes shimmer {
-  0% { background-position: -200% 0; }
-  100% { background-position: 200% 0; }
+  0% {
+    background-position: -200% 0;
+  }
+
+  100% {
+    background-position: 200% 0;
+  }
 }
 
 @keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.5; }
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
 }
 
 @keyframes bounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 .animate-fade-in {
@@ -697,7 +835,89 @@ select.form-input {
   .hide-mobile {
     display: block;
   }
+
   .hide-desktop {
     display: none;
   }
+}
+
+.app-logo-image {
+  object-fit: contain;
+  border-radius: var(--radius-xl);
+  background-color: white;
+  padding: 2px;
+}
+
+:root[data-theme='dark'] .app-logo-image,
+.dark .app-logo-image {
+  box-shadow: 0 0 12px rgba(124, 58, 237, 0.4);
+}
+
+/* === NATIVE APP STYLE RESETS === */
+input,
+button,
+select,
+textarea {
+  -webkit-appearance: none;
+  appearance: none;
+  -webkit-tap-highlight-color: transparent;
+  font-family: inherit;
+  touch-action: manipulation;
+}
+
+/* Style for form inputs */
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='number'],
+input[type='date'],
+input[type='time'],
+select,
+textarea {
+  width: 100%;
+  min-height: 52px;
+  /* Native touch target size */
+  padding: 12px 16px;
+  border-radius: 16px;
+  /* Native look */
+  border: 1px solid var(--color-border);
+  background: var(--color-bg-card);
+  font-size: 16px;
+  /* Prevents iOS zoom */
+  color: var(--color-text);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  box-sizing: border-box;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-soft);
+}
+
+/* Remove native calendar picker icon if possible, or style it */
+::-webkit-calendar-picker-indicator {
+  background-color: transparent;
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+/* Native button style overrides */
+.btn {
+  min-height: 52px;
+  border-radius: 26px;
+  /* fully rounded like iOS/Android M3 */
+  padding: 0 24px;
+  font-weight: 700;
+  text-transform: none;
+  letter-spacing: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  -webkit-user-select: none;
+  user-select: none;
 }

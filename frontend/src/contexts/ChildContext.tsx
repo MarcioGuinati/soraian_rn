@@ -27,14 +27,14 @@ export function ChildProvider({ children: childrenProp }: { children: ReactNode 
       const list = res.data.data;
       setChildrenList(list);
 
-      const savedId = localStorage.getItem('soraia_selected_child');
+      const savedId = localStorage.getItem('Nuna_selected_child');
       const saved = list.find((c: Child) => c.id === savedId);
 
       if (saved) {
         setSelectedChild(saved);
       } else if (list.length > 0) {
         setSelectedChild(list[0]);
-        localStorage.setItem('soraia_selected_child', list[0].id);
+        localStorage.setItem('Nuna_selected_child', list[0].id);
       }
     } catch (err) {
       console.error('Failed to load children', err);
@@ -55,7 +55,7 @@ export function ChildProvider({ children: childrenProp }: { children: ReactNode 
 
   const selectChild = (child: Child) => {
     setSelectedChild(child);
-    localStorage.setItem('soraia_selected_child', child.id);
+    localStorage.setItem('Nuna_selected_child', child.id);
   };
 
   return (
@@ -70,3 +70,4 @@ export function useChild() {
   if (!ctx) throw new Error('useChild must be used within ChildProvider');
   return ctx;
 }
+
