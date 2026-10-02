@@ -31,6 +31,8 @@ services:
       FRONTEND_URL: https://app.soraiababy.com.br
       VAPID_PUBLIC_KEY: ${VAPID_PUBLIC_KEY}
       VAPID_PRIVATE_KEY: ${VAPID_PRIVATE_KEY}
+      SMTP_USER: ${SMTP_USER}
+      SMTP_PASS: ${SMTP_PASS}
     volumes:
       - uploads:/app/uploads
     ports:
